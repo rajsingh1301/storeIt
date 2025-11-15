@@ -41,10 +41,43 @@
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+  
+  --color-brand: #FA7275;
+  --color-brand-100: #EA6365
+  --color-brand: #FA7275;
+  --color-brand-100: #EA6365;
+
+  --color-red: #FF7474;
+  --color-error: #b80000;
+  --color-green: #3DD9B3;
+  --color-blue: #56B8FF;
+  --color-pink: #EEA8FD;
+  --color-orange: #F9AB72;
+
+  --color-light-100: #333F4E;
+  --color-light-200: #A3B2C7;
+  --color-light-300: #F2F5F9;
+  --color-light-400: #F2F4F8;
+
+  --color-dark-100: #04050C;
+  --color-dark-200: #131524;
+
+  --font-poppins: var(--font-poppins);
+
+  --radius-lg: var(--radius);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-sm: calc(var(--radius) - 4px);
+
   --shadow-drop-1: 0px 10px 30px 0px rgba(66, 71, 97, 0.1);
   --shadow-drop-2: 0 8px 30px 0 rgba(65, 89, 214, 0.3);
   --shadow-drop-3: 0 8px 30px 0 rgba(65, 89, 214, 0.1);
 
+
+@keyframes caret-blink {
+  0%, 70%, 100% { opacity: 1; }
+  20%, 50% { opacity: 0; }
+}
+--animate-caret-blink: caret-blink 1.25s ease-out infinite;
 }
 
 :root {
@@ -116,11 +149,46 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+
+@layer utilities {
+  /* ===== TYPOGRAPHY */
+  .h1 {
+    @apply text-[34px] leading-[42px] font-bold;
   }
-  body {
-    @apply text-gray-200;
+  .h2 {
+    @apply text-[24px] leading-[36px] font-bold;
   }
+  .h3 {
+    @apply text-[20px] leading-[28px] font-semibold;
+  }
+  .h4 {
+    @apply text-[18px] leading-[20px] font-medium;
+  }
+  .h5 {
+    @apply text-[16px] leading-[24px] font-semibold;
+  }
+  .subtitle-1 {
+    @apply text-[16px] leading-[24px] font-medium;
+  }
+  .subtitle-2 {
+    @apply text-[14px] leading-[20px] font-semibold;
+  }
+  .body-1 {
+    @apply text-[16px] leading-[24px] font-normal;
+  }
+  .button {
+    @apply text-[14px] leading-[20px] font-medium;
+  }.caption {
+    @apply text-[12px] leading-[16px] font-normal;
+  }
+  .overline {
+    @apply text-[10px] leading-[14px] font-normal;
+  }
+  .container {
+    @apply mx-auto max-w-7xl px-5;
+  }
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+ 
 }

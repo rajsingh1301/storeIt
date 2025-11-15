@@ -165,7 +165,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
             </p>
             <Link
               href={type === "sign-in" ? "/sign-up" : "/sign-in"}
-              className="text-[#FA7275] ml-1"
+              className=" text-[#FA7275] ml-1"
             >
               {type === "sign-in" ? "Sign Up" : "Sign In"}
             </Link>
