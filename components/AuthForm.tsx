@@ -94,7 +94,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
               name="fullName"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex h-[78px] flex-col justify-center rounded-xl border border-light-300 px-4 shadow-drop-1">
+                  <div className="flex h-[78px] flex-col justify-center rounded-xl border border-[#333F4E] px-4 shadow-drop-1">
                     <FormLabel className="text-[#333F4E] pt-2 text-[14px] leading-5 font-normal w-full">
                       Full Name
                     </FormLabel>
