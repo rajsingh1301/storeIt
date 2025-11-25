@@ -1,5 +1,7 @@
 import React from "react";
 import Image from "next/image";
+import { verifySecret,sendEmailOTP } from "@/lib/actions/user.action";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,6 +22,7 @@ import {
 import { useState } from "react";
 import { log } from "console";
 import { Button } from "./ui/button";
+import { useRouter } from "next/navigation";
 const OTPModal = ({
   accountId,
   email,
@@ -27,6 +30,7 @@ const OTPModal = ({
   accountId: string;
   email: string;
 }) => {
+  const router = useRouter()
   const [isOpen, setIsOpen] = useState(true);
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -35,12 +39,17 @@ const OTPModal = ({
     setIsLoading(true);
 
     try {
+
       //call api to verify otp
+      const secretId = await verifySecret({ accountId, password });
+      if(secretId)router.push("/")
     } catch (error) {
       console.log("Failed to verify otp", error);
     }
   };
-  const handleResendOtp = async () => {};
+  const handleResendOtp = async () => {
+    await sendEmailOTP({ email });
+  };
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
       <AlertDialogContent
@@ -96,7 +105,7 @@ const OTPModal = ({
         </InputOTP>
         <AlertDialogFooter className="w-full flex flex-col items-center mt-4">
           <div className="w-full">
-            <AlertDialogAction className="w-full py-4 mb-3 rounded-full bg-[#EA6365] text-white font-semibold text-[18px] flex items-center justify-center shadow-[inset_0_-4px_8px_rgba(0,0,0,0.1)] hover:bg-[#e05a5d] transition-all mx-auto">
+            <AlertDialogAction className="w-full py-4 mb-3 rounded-full bg-[#EA6365] text-white font-semibold text-[18px] flex items-center justify-center shadow-[inset_0_-4px_8px_rgba(0,0,0,0.1)] hover:bg-[#e05a5d] transition-all mx-auto" onClick={handleSubmit}>
               Submit
               {isLoading && (
                 <Image

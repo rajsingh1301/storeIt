@@ -1,36 +1,40 @@
 @import "tailwindcss";
 
-
-
-/* Optional: Add your global resets */
-*{
+/* Resets */
+* {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Light theme variables */
+/* Light Theme Variables */
 :root {
   --background: #ffffff;
   --foreground: #0f172a;
   --shadow-drop-1: 0px 10px 30px 0px rgba(66, 71, 97, 0.1);
   --shadow-drop-2: 0 8px 30px 0 rgba(65, 89, 214, 0.3);
   --shadow-drop-3: 0 8px 30px 0 rgba(65, 89, 214, 0.1);
-  --radius: 12px; /* or whatever your base radius is */
+  --radius: 12px;
 
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
-
 }
 
-/* Dark theme support */
+/* Dark Theme */
 .dark {
   --background: #0f172a;
   --foreground: #ffffff;
 }
 
-/* Apply background + text globally */
+@layer utilities {
+  .test {
+    @apply bg-red-500 text-white p-4;
+  }
+}
+
+
+/* Global styles */
 body {
   background: var(--background);
   color: var(--foreground);

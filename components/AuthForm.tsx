@@ -52,30 +52,23 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
   });
 
   const onSubmit = async (values: FormValues) => {
-    setIsLoading(true);
-    setErrorMessage("");
+  setIsLoading(true);
+  setErrorMessage("");
 
-    try {
-      console.log(values);
-    } catch {
-      setErrorMessage("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
+  try {
+    const user = await createAccount({
+      fullName: values.fullName || "",
+      email: values.email,
+    });
 
-    try {
-      const user = await createAccount({
-        fullName: values.fullName || "",
-        email: values.email,
-      });
-
-      setAccountId(user.accountId);
-    } catch {
-      setErrorMessage("Something went wrong");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    setAccountId(user.accountId);
+  } catch (error: any) {
+    console.error("Full error:", error);
+    setErrorMessage(error?.message || "Something went wrong");
+  } finally {
+    setIsLoading(false);
+  }
+};
 
   return (
     <>
@@ -174,7 +167,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
       </Form>
 
       {/* OTP Verification */}
-      {true && (
+      {accountId && (
         <OTPModal
           email={form.getValues("email")}
           accountId={accountId}

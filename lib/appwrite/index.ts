@@ -1,8 +1,8 @@
 "use server";
-import { Account, Avatars, Client, Databases } from "node-appwrite";
+import { Account, Avatars, Client, Databases,Storage } from "node-appwrite";
 import { appWriteConfig } from "./config";
 import { cookies } from "next/headers";
-import { da } from "zod/locales";
+
 export const createSessionClient = async () => {
   const client = new Client()
     .setEndpoint(appWriteConfig.endpointUrl)
