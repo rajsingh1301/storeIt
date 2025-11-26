@@ -46,6 +46,7 @@ const OTPModal = ({
     } catch (error) {
       console.log("Failed to verify otp", error);
     }
+    setIsLoading(false);
   };
   const handleResendOtp = async () => {
     await sendEmailOTP({ email });

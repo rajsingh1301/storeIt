@@ -1,11 +1,12 @@
 "use server";
-import { Query, ID, Databases } from "node-appwrite";
-import { createAdminClient } from "../appwrite";
+import { Query, ID, Databases, Account } from "node-appwrite";
+import { createAdminClient, createSessionClient } from "../appwrite";
 import { appWriteConfig } from "../appwrite/config";
 
 import { parseStringify } from "../utils";
 import { cookies } from "next/headers";
 import { strict } from "assert";
+import { avatarPlaceholderUrl } from "@/constants";
 const getUserByEmail = async (email: string) => {
   const { database } = await createAdminClient();
 
@@ -52,8 +53,7 @@ export const createAccount = async ({
       data: {
         fullName,
         email,
-        avatar:
-          "https://media.istockphoto.com/id/2151669184/vector/vector-flat-illustration-in-grayscale-avatar-user-profile-person-icon-gender-neutral.jpg?s=612x612&w=0&k=20&c=UEa7oHoOL30ynvmJzSCIPrwwopJdfqzBs0q69ezQoM8=",
+        avatar: avatarPlaceholderUrl,
         accountId,
       },
     });
@@ -72,14 +72,24 @@ export const verifySecret = async ({
     const session = await account.createSession(accountId, password);
 
     (await cookies()).set("appwrite_session", session.secret, {
-        path :"/",
-        httpOnly: true,
-        sameSite:"strict",
-        secure:true
-
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
+      secure: true,
     });
-   return { sessionId: session.$id };
+    return { sessionId: session.$id };
   } catch (error) {
     handleError(error, "Failed to verify otp");
   }
+};
+export const getUserProfile = async () => {
+  const { account, database } = await createSessionClient();
+  const result = await account.get();
+  const userData = await database.listDocuments(
+    appWriteConfig.databaseId,
+    appWriteConfig.usersCollectionId,
+    [ Query.equal("accountId", result.$id) ]
+  );
+  if (userData === null) throw new Error("User data not found");
+  return parseStringify(userData.documents[0]);
 };

@@ -19,6 +19,7 @@
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
+  --brand:#cc4820;
 }
 
 /* Dark Theme */
@@ -27,9 +28,25 @@
   --foreground: #ffffff;
 }
 
-@layer utilities {
-  .test {
-    @apply bg-red-500 text-white p-4;
+@layer utilities{
+  
+    .h1 {
+    @apply text-[34px] leading-[42px] font-bold;
+  }
+  .h2 {
+    @apply text-[24px] leading-[36px] font-bold;
+  }
+  .h3 {
+    @apply text-[20px] leading-[28px] font-semibold;
+  }
+  .h4 {
+    @apply text-[18px] leading-[20px] font-medium;
+  }
+  .h5 {
+    @apply text-[16px] leading-[24px] font-semibold;
+  }
+  .sidebar-nav {
+    @apply  mt-9 flex-1 gap-1  ;
   }
 }
 
