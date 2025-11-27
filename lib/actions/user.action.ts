@@ -1,4 +1,5 @@
 "use server";
+
 import { Query, ID, Databases, Account } from "node-appwrite";
 import { createAdminClient, createSessionClient } from "../appwrite";
 import { appWriteConfig } from "../appwrite/config";
@@ -7,6 +8,7 @@ import { parseStringify } from "../utils";
 import { cookies } from "next/headers";
 import { strict } from "assert";
 import { avatarPlaceholderUrl } from "@/constants";
+import { redirect } from "next/navigation";
 const getUserByEmail = async (email: string) => {
   const { database } = await createAdminClient();
 
@@ -88,8 +90,24 @@ export const getUserProfile = async () => {
   const userData = await database.listDocuments(
     appWriteConfig.databaseId,
     appWriteConfig.usersCollectionId,
-    [ Query.equal("accountId", result.$id) ]
+    [Query.equal("accountId", result.$id)]
   );
   if (userData === null) throw new Error("User data not found");
   return parseStringify(userData.documents[0]);
 };
+
+//logout user
+export const signOutUser = async () => {
+  const { account } = await createSessionClient();
+  try {
+    await account.deleteSession("current");
+    (await cookies()).delete("appwrite-session");
+  } catch (error) {
+    handleError(error, "Failed to sign-out");
+  } finally{
+  redirect("/sign-in")}
+};
+
+export const signInUser =  async ({email}:{email:string}) =>{
+
+}
