@@ -18,6 +18,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { createAccount } from "@/lib/actions/user.action";
+import { signInUser } from "@/lib/actions/user.action";
 
 type FormType = "sign-in" | "sign-up";
 
@@ -56,10 +57,11 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
   setErrorMessage("");
 
   try {
-    const user = await createAccount({
+    const user =
+    type === "sign-up" ?   await createAccount({
       fullName: values.fullName || "",
-      email: values.email,
-    });
+      email: values.email ,
+    }): await signInUser({email :values.email}); 
 
     setAccountId(user.accountId);
   } catch (error: any) {

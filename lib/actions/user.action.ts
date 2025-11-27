@@ -9,6 +9,7 @@ import { cookies } from "next/headers";
 import { strict } from "assert";
 import { avatarPlaceholderUrl } from "@/constants";
 import { redirect } from "next/navigation";
+import { error } from "console";
 const getUserByEmail = async (email: string) => {
   const { database } = await createAdminClient();
 
@@ -104,10 +105,27 @@ export const signOutUser = async () => {
     (await cookies()).delete("appwrite-session");
   } catch (error) {
     handleError(error, "Failed to sign-out");
-  } finally{
-  redirect("/sign-in")}
+  } finally {
+    redirect("/sign-in");
+  }
 };
 
-export const signInUser =  async ({email}:{email:string}) =>{
+export const signInUser = async ({ email }: { email: string }) => {
+  try {
+    const existingUser = await getUserByEmail(email);
 
-}
+    if (!existingUser) {
+      return parseStringify({ accountId: null, error: "user not found" });
+    }
+
+    const { account } = await createAdminClient();
+    const token = await account.createEmailToken(existingUser.accountId, email);
+
+    return parseStringify({
+      accountId: token.userId,
+      tokenId: token.secret,
+    });
+  } catch (error) {
+    handleError(error, "failed to sign in user");
+  }
+};
