@@ -1,24 +1,60 @@
-"use client"
-import {useCallback} from 'react'
-import {useDropzone} from 'react-dropzone'
+"use client";
 
-const FileUploader = () => {
-    const onDrop = useCallback(acceptedFiles => {
-    // Do something with the files
-  }, [])
-  const {getRootProps, getInputProps, isDragActive} = useDropzone({onDrop})
+import React, { useCallback, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import { Button } from "./ui/button";
+import { cn, getFileType } from "@/lib/utils";
+import Image from "next/image";
+import Thumbnail from "./Thumbnail";
+interface Props{
+  ownerId:string;
+  accountId:string;
+  className?:string;
+}
+
+const FileUploader = ({ownerId , accountId , className}: Props) => {
+  const [files , setFiles] = useState<File[]>([]);
+  const onDrop = useCallback(async (acceptedFiles: File[]) => {
+    setFiles(acceptedFiles)
+  }, []);
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
-    <div {...getRootProps()} className = "cursor pointer">
+    <div {...getRootProps()} className="cursor-pointer">
       <input {...getInputProps()} />
-      <Button type "button" className={cn(' flex items-center justify-between  gap-3 rounded-xl p-3 shadow-drop-3')}
-      {
-        isDragActive ?
-          <p>Drop the files here ...</p> :
-          <p>Drag 'n' drop some files here, or click to select files</p>
-      }
+<Button
+  type="button"
+  className={cn(" bg-[#FA7275] hover:bg-[#EA6365] transition-all rounded-full button h-[52px] gap-2 px-10 shadow-drop-1 text-white ", className)}
+>
+  <Image src="/assets/icons/upload.svg" alt="upload" width={24} height={24} />
+  <p>Upload</p>
+</Button>
+{files.length > 0 && <ul className="fixed bottom-10 right-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-white p-7 shadow-drop-3"> 
+  <h4 className="h4 text-[#333F4E]"> Uploading</h4>
+ {files.map((file , index) => {
+  const {type , extension} = getFileType(file.name);
+  return ( <li key={`${file.name}-${index}`}
+    className = "flex items-center justify-between  gap-3 rounded-xl p-3 shadow-drop-3">
+      <div className=" flex items-center gap-3">
+        <Thumbnail
+        type = {type}
+        extension={extension}
+        url = {URL.createObjectURL(file)}
+
+        />
+      </div>
+    </li>
+  )
+ })}
+  </ul>}
+      {isDragActive ? (
+        <p>Drop the files here ...</p>
+      ) : (
+        <p>Drag 'n' drop some files here, or click to select files</p>
+      )}
     </div>
   )
 }
 
-export default FileUploader
+export default FileUploader;

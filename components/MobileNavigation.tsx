@@ -2,8 +2,7 @@
 import {
   Sheet,
   SheetContent,
-  SheetDescription,
-  SheetHeader,
+  
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
@@ -14,7 +13,7 @@ import { useState } from "react";
 import { navItems } from "@/constants";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import FileUploader from "./FileUploader";
+import FileUploader from "@/components/FileUploader";
 import { signOutUser } from "@/lib/actions/user.action";
 
 
@@ -91,7 +90,7 @@ const MobileNavigation = ({
          
          <Separator className="my-5 bg-[#A3B2C7]/20"/>
          <div className="flex flex-col justify-between gap-5">
-          <FileUploader/>
+          <FileUploader ownerId={ownerId} accountId={accountId} className="w-full"/>
            <button
                       type="button"
                    className=" h5 flex h-[52px] w-full items-center justify-center gap-4 rounded-full bg-[#FA7275]/10 px-6 text-[#FA7275] shadow-none transition-all hover:bg-[#FA7275]/20 "
