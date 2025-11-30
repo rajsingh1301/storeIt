@@ -6,16 +6,17 @@ import { Button } from "./ui/button";
 import { cn, getFileType } from "@/lib/utils";
 import Image from "next/image";
 import Thumbnail from "./Thumbnail";
-interface Props{
-  ownerId:string;
-  accountId:string;
-  className?:string;
+import { convertFileToUrl } from "@/lib/utils";
+interface Props {
+  ownerId: string;
+  accountId: string;
+  className?: string;
 }
 
-const FileUploader = ({ownerId , accountId , className}: Props) => {
-  const [files , setFiles] = useState<File[]>([]);
+const FileUploader = ({ ownerId, accountId, className }: Props) => {
+  const [files, setFiles] = useState<File[]>([]);
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    setFiles(acceptedFiles)
+    setFiles(acceptedFiles);
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
@@ -23,38 +24,59 @@ const FileUploader = ({ownerId , accountId , className}: Props) => {
   return (
     <div {...getRootProps()} className="cursor-pointer">
       <input {...getInputProps()} />
-<Button
-  type="button"
-  className={cn(" bg-[#FA7275] hover:bg-[#EA6365] transition-all rounded-full button h-[52px] gap-2 px-10 shadow-drop-1 text-white ", className)}
->
-  <Image src="/assets/icons/upload.svg" alt="upload" width={24} height={24} />
-  <p>Upload</p>
-</Button>
-{files.length > 0 && <ul className="fixed bottom-10 right-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-white p-7 shadow-drop-3"> 
-  <h4 className="h4 text-[#333F4E]"> Uploading</h4>
- {files.map((file , index) => {
-  const {type , extension} = getFileType(file.name);
-  return ( <li key={`${file.name}-${index}`}
-    className = "flex items-center justify-between  gap-3 rounded-xl p-3 shadow-drop-3">
-      <div className=" flex items-center gap-3">
-        <Thumbnail
-        type = {type}
-        extension={extension}
-        url = {URL.createObjectURL(file)}
-
+      <Button
+        type="button"
+        className={cn(
+          " bg-[#FA7275] hover:bg-[#EA6365] transition-all rounded-full button h-[52px] gap-2 px-10 shadow-drop-1 text-white ",
+          className
+        )}
+      >
+        <Image
+          src="/assets/icons/upload.svg"
+          alt="upload"
+          width={24}
+          height={24}
         />
-      </div>
-    </li>
-  )
- })}
-  </ul>}
+        <p>Upload</p>
+      </Button>
+      {files.length > 0 && (
+        <ul className="fixed bottom-10 right-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-white p-7 shadow-drop-3">
+          <h4 className="h4 text-[#333F4E]"> Uploading</h4>
+          {files.map((file, index) => {
+            const { type, extension } = getFileType(file.name);
+            return (
+              <li
+                key={`${file.name}-${index}`}
+                className="flex items-center justify-between  gap-3 rounded-xl p-3 shadow-drop-3"
+              >
+                <div className=" flex items-center gap-3">
+                  <Thumbnail
+                    type={type}
+                    extension={extension}
+                    url={convertFileToUrl(file)}
+                  />
+                  <div className=" text-[14px] leading-[20px] font-semibold mb-2 line-clamp-1 max-w-[300px]">
+                    {file.name}
+                    <Image
+                      src="/assets/icons/file-loader.gif"
+                      width={70}
+                      height={26}
+                      alt="loader"
+                    />
+                  </div>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
       {isDragActive ? (
         <p>Drop the files here ...</p>
       ) : (
         <p>Drag 'n' drop some files here, or click to select files</p>
       )}
     </div>
-  )
-}
+  );
+};
 
 export default FileUploader;
