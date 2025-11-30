@@ -2,6 +2,7 @@ import Image from "next/image";
 import React from "react";
 import { Button } from "./ui/button";
 import { signOutUser } from "@/lib/actions/user.action";
+import FileUploader from "./FileUploader";
 
 const Header = () => {
   return (
@@ -11,7 +12,7 @@ const Header = () => {
       </div>
 
       <div className="flex items-center gap-4">
-        <span className="text-lg font-medium">FileUploader</span>
+        <span className="text-lg font-medium "><FileUploader/></span>
         <form action= {async () => {
           'use server';
           await signOutUser();

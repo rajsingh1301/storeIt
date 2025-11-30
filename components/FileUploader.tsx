@@ -14,6 +14,13 @@ interface Props {
 }
 
 const FileUploader = ({ ownerId, accountId, className }: Props) => {
+  const handleRemoveFile = (
+    e: React.MouseEvent<HTMLImageElement, MouseEvent>,
+    fileName: string
+  ) => {
+    e.stopPropagation();
+    setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
+  };
   const [files, setFiles] = useState<File[]>([]);
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
@@ -22,12 +29,12 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
 
   return (
-    <div {...getRootProps()} className="cursor-pointer">
+    <div {...getRootProps()} className="cursor-pointer w-fit mx-auto mt-6">
       <input {...getInputProps()} />
       <Button
         type="button"
         className={cn(
-          " bg-[#FA7275] hover:bg-[#EA6365] transition-all rounded-full button h-[52px] gap-2 px-10 shadow-drop-1 text-white ",
+          "bg-[#FA7275] hover:bg-[#E46F72] transition-all rounded-[42px] h-[52px] w-35 lg:h-[52px] px-10 lg:px-16 flex items-center gap-3 shadow-[0_6px_18px_rgba(250,114,117,0.35)] text-white text-[16px] lg:text-[18px] font-semibold tracking-wide",
           className
         )}
       >
@@ -55,7 +62,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
                     extension={extension}
                     url={convertFileToUrl(file)}
                   />
-                  <div className=" text-[14px] leading-[20px] font-semibold mb-2 line-clamp-1 max-w-[300px]">
+                  <div className=" text-[14px] leading-[20px] font-semibold mb-2 max-w-[300px]">
                     {file.name}
                     <Image
                       src="/assets/icons/file-loader.gif"
@@ -65,6 +72,13 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
                     />
                   </div>
                 </div>
+                <Image
+                  src="/assets/icons/remove.svg"
+                  width={24}
+                  height={24}
+                  alt="remove"
+                  onClick={(e) => handleRemoveFile(e, file.name)}
+                />
               </li>
             );
           })}
