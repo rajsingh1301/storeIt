@@ -1,4 +1,11 @@
 "use server";
+
+import { createAdminClient } from "../appwrite";
+const handleError = (error: unknown, message: string) => {
+  console.log(error, message);
+  throw error;
+}; 
+
 interface UploadFileProps {
   file: File;
   ownerId: string;
@@ -10,4 +17,15 @@ export const uploadFile = async ({
   ownerId,
   accountId,
   path,
-}: UploadFileProps) => {};
+}: UploadFileProps) => {
+    const {storage , database} = await createAdminClient();
+
+    try {
+
+    }catch (error){
+
+        handleError(error, "failed to upload file");
+    }
+
+
+};
