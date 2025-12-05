@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+    "typeRoots": ["./node_modules/@types", "../types"],
+    "types": ["node"],
+
     "target": "ES2017",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
@@ -28,7 +31,8 @@
     "**/*.tsx",
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
-    "**/*.mts"
+    "**/*.mts",
+    "../types/**/*.d.ts"
   ],
   "exclude": ["node_modules"]
 }
