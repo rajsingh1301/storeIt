@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { use, useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "./ui/button";
 import { cn, getFileType } from "@/lib/utils";
@@ -9,6 +9,9 @@ import Thumbnail from "./Thumbnail";
 import { convertFileToUrl } from "@/lib/utils";
 import { MAX_FILE_SIZE } from "@/constants";
 import { set } from "zod";
+import { toast } from "sonner";
+import { uploadFile } from "@/lib/actions/files.action";
+import { usePathname } from "next/navigation";
 interface Props {
   ownerId: string;
   accountId: string;
@@ -23,13 +26,33 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
     e.stopPropagation();
     setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
   };
+  const path = usePathname()
   const [files, setFiles] = useState<File[]>([]);
   const onDrop = useCallback(async (acceptedFiles: File[]) => {
     setFiles(acceptedFiles);
     const uploadPromises = acceptedFiles.map(async (file) => {
-      if(file.size > MAX_FILE_SIZE){
+      if (file.size > MAX_FILE_SIZE) {
         setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
+        return toast.error(
+          <p className="text-[14px] leading-5 font-normal text-white">
+            <span className="font-semibold">{file.name}</span> is too large.
+            Maximum file size is 50MB.
+          </p>,
+          {
+            style: {
+              background: "#ef4444",
+              color: "white",
+              borderRadius: "10px",
+            },
+          }
+        );
       }
+      return uploadFile({file , ownerId , accountId , path}).then( (uploadedFile) =>{
+        if(uploadedFile){
+          setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
+          toast.success( 
+      })
+    });
   }, []);
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
@@ -89,11 +112,6 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
             );
           })}
         </ul>
-      )}
-      {isDragActive ? (
-        <p>Drop the files here ...</p>
-      ) : (
-        <p>Drag 'n' drop some files here, or click to select files</p>
       )}
     </div>
   );
