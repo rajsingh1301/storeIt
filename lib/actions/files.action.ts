@@ -22,22 +22,35 @@ export const uploadFile = async ({
   const { storage, database } = await createAdminClient();
 
   try {
-    const inputFile = InputFile.fromBuffer(file, file.name);
+    // Convert plain array back to Buffer
+    const buffer = Buffer.from(file.buffer);
+    const inputFile = InputFile.fromBuffer(buffer, file.name);
     const bucketFile = await storage.createFile(
       appWriteConfig.bucketId,
       ID.unique(),
       inputFile
     );
+
+    // Generate a numeric user ID from the string ownerId
+    const numericUserId =
+      Math.abs(
+        ownerId.split("").reduce((acc, char) => {
+          return acc * 31 + char.charCodeAt(0);
+        }, 0)
+      ) % 2147483647; // Keep within 32-bit integer range
+
     const fileDocument = {
       type: getFileType(bucketFile.name).type,
-      name: bucketFile.name,
+      fileType: getFileType(bucketFile.name).type,
+      fileName: bucketFile.name,
       url: constructFileUrl(bucketFile.$id),
-      extension: getFileType(bucketFile.name).extension,
-      size: bucketFile.sizeOriginal,
+      fileSize: bucketFile.sizeOriginal,
       owner: ownerId,
       accountId: accountId,
-      users: [],
       bucketFileId: bucketFile.$id,
+      uploadDate: new Date().toISOString(),
+      uploadedByUserId: numericUserId,
+      filePath: path,
     };
     const newFile = await database
       .createDocument(

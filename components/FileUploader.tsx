@@ -1,6 +1,6 @@
 "use client";
 
-import React, { use, useCallback, useState } from "react";
+import React, { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Button } from "./ui/button";
 import { cn, getFileType } from "@/lib/utils";
@@ -8,7 +8,6 @@ import Image from "next/image";
 import Thumbnail from "./Thumbnail";
 import { convertFileToUrl } from "@/lib/utils";
 import { MAX_FILE_SIZE } from "@/constants";
-import { set } from "zod";
 import { toast } from "sonner";
 import { uploadFile } from "@/lib/actions/files.action";
 import { usePathname } from "next/navigation";
@@ -26,36 +25,67 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
     e.stopPropagation();
     setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
   };
-  const path = usePathname()
+  const path = usePathname();
   const [files, setFiles] = useState<File[]>([]);
-  const onDrop = useCallback(async (acceptedFiles: File[]) => {
-    setFiles(acceptedFiles);
-    const uploadPromises = acceptedFiles.map(async (file) => {
-      if (file.size > MAX_FILE_SIZE) {
-        setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
-        return toast.error(
-          <p className="text-[14px] leading-5 font-normal text-white">
-            <span className="font-semibold">{file.name}</span> is too large.
-            Maximum file size is 50MB.
-          </p>,
-          {
-            style: {
-              background: "#ef4444",
-              color: "white",
-              borderRadius: "10px",
-            },
-          }
-        );
-      }
-      return uploadFile({file , ownerId , accountId , path}).then( (uploadedFile) =>{
-        if(uploadedFile){
-          setFiles((prevFiles) => prevFiles.filter((f) => f.name !== file.name));
-         
-      }
-    });
-  }, [ownerId, accountId, path]);
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      setFiles(acceptedFiles);
+      const uploadPromises = acceptedFiles.map(async (file) => {
+        if (file.size > MAX_FILE_SIZE) {
+          setFiles((prevFiles) =>
+            prevFiles.filter((f) => f.name !== file.name)
+          );
+          return toast.error(
+            <p className="text-[14px] leading-5 font-normal text-white">
+              <span className="font-semibold">{file.name}</span> is too large.
+              Maximum file size is 50MB.
+            </p>,
+            {
+              style: {
+                background: "#ef4444",
+                color: "white",
+                borderRadius: "10px",
+              },
+            }
+          );
+        }
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+        // Convert File to array for server action
+        const arrayBuffer = await file.arrayBuffer();
+        const buffer = Array.from(new Uint8Array(arrayBuffer));
+        const fileData = { buffer, name: file.name };
+
+        return uploadFile({ file: fileData, ownerId, accountId, path })
+          .then((uploadedFile) => {
+            if (uploadedFile) {
+              setFiles((prevFiles) =>
+                prevFiles.filter((f) => f.name !== file.name)
+              );
+            }
+          })
+          .catch((error) => {
+            console.error("Upload error:", error);
+            toast.error(
+              <p className="text-[14px] leading-5 font-normal text-white">
+                Failed to upload{" "}
+                <span className="font-semibold">{file.name}</span>
+              </p>,
+              {
+                style: {
+                  background: "#ef4444",
+                  color: "white",
+                  borderRadius: "10px",
+                },
+              }
+            );
+          });
+      });
+      await Promise.all(uploadPromises);
+    },
+    [ownerId, accountId, path]
+  );
+
+  const { getRootProps, getInputProps } = useDropzone({ onDrop });
 
   return (
     <div {...getRootProps()} className="cursor-pointer w-fit mx-auto mt-6">
@@ -91,7 +121,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
                     extension={extension}
                     url={convertFileToUrl(file)}
                   />
-                  <div className=" text-[14px] leading-[20px] font-semibold mb-2 max-w-[300px]">
+                  <div className=" text-[14px] leading-5 font-semibold mb-2 max-w-[300px]">
                     {file.name}
                     <Image
                       src="/assets/icons/file-loader.gif"

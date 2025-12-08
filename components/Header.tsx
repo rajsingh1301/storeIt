@@ -4,24 +4,30 @@ import { Button } from "./ui/button";
 import { signOutUser } from "@/lib/actions/user.action";
 import FileUploader from "./FileUploader";
 
-const Header = () => {
+const Header = ({
+  userId,
+  accountId,
+}: {
+  userId: string;
+  accountId: string;
+}) => {
   return (
-    <header className="w-full flex items-center justify-between px-6 py-4">
-      <div className="text-lg font-medium text-black">
-        Search
-      </div>
+    <header className=" hidden items-center justify-between gap-5 p-5 sm:flex lg:py-7 xl:gap-10">
+      <div className="text-lg font-medium text-black">Search</div>
 
       <div className="flex items-center gap-4">
-        <span className="text-lg font-medium "><FileUploader/></span>
-        <form action= {async () => {
-          'use server';
-          await signOutUser();
-
-        }}>
+        <span className="text-lg font-medium ">
+          <FileUploader ownerId={userId} accountId={accountId} />
+        </span>
+        <form
+          action={async () => {
+            "use server";
+            await signOutUser();
+          }}
+        >
           <Button
             type="submit"
             className="flex items-center justify-center h-[52px] w-[52px] rounded-full bg-red-100 text-white shadow-none transition-all hover:bg-[#fa7275]/80"
-            
           >
             <Image
               src="/assets/icons/logout.svg"
