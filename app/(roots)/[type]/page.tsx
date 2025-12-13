@@ -1,4 +1,5 @@
 import React from 'react'
+import Sort from '@/components/sort'
 
 const page = async ({params }: SearchParamProps) => {
     const type = ((await params)?.type as string)   || " ";
@@ -12,9 +13,9 @@ const page = async ({params }: SearchParamProps) => {
               0 MB</span> </p>
               <div className='mt-5 flex items-center sm:mt-0 sm:gap-3 '>
                 <p className='text-[16px] leading-5 font-normal hidden sm:block text-[]'>
-          helloooo
+          Sort by: 
                 </p>
-
+              <Sort/>
               </div>
             </div>
              </section>
