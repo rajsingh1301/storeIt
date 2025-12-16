@@ -7,6 +7,8 @@ import { appWriteConfig } from "@/lib/appwrite/config";
 import { ID, Models, Query } from "node-appwrite";
 import { constructFileUrl, getFileType, parseStringify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
+import { ca } from "zod/v4/locales";
+import { get } from "http";
 
 const handleError = (error: unknown, message: string) => {
   console.log(error, message);
@@ -70,3 +72,15 @@ export const uploadFile = async ({
     handleError(error, "failed to upload file");
   }
 };
+const getFiles = async ( ) =>{
+  const { database } = await createAdminClient();
+  try {
+    const currentUser = await getCurrentUser();
+    if(!currentUser){
+      throw new Error("User not authenticated");
+    }
+
+  }catch (error) {
+    handleError(error, "failed to get files");
+  }
+}
