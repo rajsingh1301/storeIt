@@ -48,6 +48,10 @@
   .sidebar-nav {
     @apply  mt-9 flex-1 gap-1  ;
   }
+  .body-1{
+    @apply text-[16px] leading-[24px] font-normal;
+
+  }
 }
 
 

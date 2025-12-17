@@ -2,13 +2,12 @@
 
 import { createAdminClient, createSessionClient } from "@/lib/appwrite";
 import { InputFile } from "node-appwrite/file";
-
 import { appWriteConfig } from "@/lib/appwrite/config";
 import { ID, Models, Query } from "node-appwrite";
 import { constructFileUrl, getFileType, parseStringify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
-import { ca } from "zod/v4/locales";
-import { get } from "http";
+import { getUserProfile } from "@/lib/actions/user.action";
+import { log } from "console";
 
 const handleError = (error: unknown, message: string) => {
   console.log(error, message);
@@ -72,15 +71,30 @@ export const uploadFile = async ({
     handleError(error, "failed to upload file");
   }
 };
-const getFiles = async ( ) =>{
+const createQueries = (currentUser: Models.Document) => {
+  const queries = [Query.equal("owner", [currentUser.$id])];
+  return queries;
+};
+
+export const getFiles = async () => {
   const { database } = await createAdminClient();
   try {
-    const currentUser = await getCurrentUser();
-    if(!currentUser){
+    const currentUser = await getUserProfile();
+    if (!currentUser) {
       throw new Error("User not authenticated");
     }
 
-  }catch (error) {
+    const queries = createQueries(currentUser);
+    console.log({currentUser , queries}); // Debugging line to check queries
+    const files = await database.listDocuments(
+      appWriteConfig.databaseId,
+      appWriteConfig.filesCollectionId,
+      queries
+    );
+        console.log({files}); // Debugging line to check queries
+
+    return parseStringify(files);
+  } catch (error) {
     handleError(error, "failed to get files");
   }
-}
+};
