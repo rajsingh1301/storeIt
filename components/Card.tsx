@@ -12,16 +12,16 @@ interface FileDocument extends Models.Document {
   extension: string;
   fileName: string;
   fileSize: number;
-  owner: {
+  owner: string; // User ID
+  uploadedByUserId?: {
     fullName: string;
-  }
- 
+  }; // Add this if it exists in your data
 }
 
 function Card( { file }: { file: FileDocument } ) {
   
-  // Debug: Check the entire file object
- console.log(file.owner.fullName);
+  // Safe access with optional chaining
+  console.log('Owner name:', file.uploadedByUserId?.fullName);
   
   return (
    <a href={file.url} target='_blank' rel="noopener noreferrer" className='flex cursor-pointer flex-col gap-6 rounded-[18px] bg-white p-5 shadow-sm transition-all hover:shadow-drop-3'> 
@@ -36,7 +36,7 @@ function Card( { file }: { file: FileDocument } ) {
    {file.fileName}
     </p>
     <FormatedDateTime date = {file.$createdAt} className = "body-2 text-[#333F4E]}" />
-    <p className='body-2'> By:  {file.owner.fullName}</p>
+    <p className='body-2'> By: {file.uploadedByUserId?.fullName || `User ${file.owner}`}</p>
    </div>
    </a>
   )

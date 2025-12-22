@@ -129,3 +129,17 @@ export const signInUser = async ({ email }: { email: string }) => {
     handleError(error, "failed to sign in user");
   }
 };
+export const getUserById = async (userId: string) => {
+  try {
+    const { database } = await createAdminClient();
+    const user = await database.getDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.usersCollectionId,
+      userId
+    );
+    return parseStringify(user);
+  } catch (error) {
+    console.log("Error fetching user:", error);
+    return null;
+  }
+};
