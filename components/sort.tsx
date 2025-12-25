@@ -2,7 +2,7 @@ import React from 'react'
 
 const sort = () => {
   return (
-    <div>sort</div>
+    <div>sojiniinbut</div>
   )
 }
 
