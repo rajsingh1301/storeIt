@@ -19,62 +19,58 @@ interface FileDocument extends Models.Document {
   };
 }
 const Card = ({ file }: { file: FileDocument }) => {
-  console.log(file.name)
+  const displayName = file.fileName || file.name || "Unnamed File";
+
   return (
-   
     <Link
       href={file.url}
       target="_blank"
-      className="group relative flex cursor-pointer flex-col gap-6 rounded-2xl bg-gradient-to-br from-white to-gray-50/50 p-6 shadow-lg shadow-gray-200/50 ring-1 ring-gray-100 transition-all duration-300 hover:scale-[1.02] hover:shadow-2xl hover:shadow-[#FA7275]/20 hover:ring-[#FA7275]/30 hover:-translate-y-1"
+      className="group relative flex cursor-pointer flex-col rounded-3xl bg-white p-5 shadow-sm ring-1 ring-gray-100/50 transition-all duration-300 ease-out hover:shadow-xl hover:shadow-[#FA7275]/10 hover:ring-[#FA7275]/40 hover:-translate-y-0.5"
     >
-      {/* Gradient overlay on hover */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-[#FA7275]/5 to-[#FA7275]/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
+      {/* Top section with thumbnail and metadata */}
+      <div className="relative flex items-start justify-between gap-4 mb-4">
+        {/* Left: Thumbnail + name */}
+        <div className="flex flex-col items-start gap-3">
+          <div className="relative">
+            <Thumbnail
+              type={file.type}
+              extension={file.extension}
+              url={file.url}
+              className="!size-[120px] ring-2 ring-gray-100/80 shadow-sm transition-all duration-300 group-hover:ring-[#FA7275]/30 group-hover:shadow-md group-hover:scale-[1.03]"
+              imageClassName="!size-full object-cover"
+            />
+            <div className="absolute -top-1.5 -right-1.5 h-3.5 w-3.5 rounded-full bg-[#FA7275] ring-2 ring-white shadow-sm" />
+          </div>
 
-      <div className="relative flex justify-between items-start">
-        <div className="relative flex flex-col gap-3">
-          <Thumbnail
-            type={file.type}
-            extension={file.extension}
-            url={file.url}
-            className="!size-24 ring-2 ring-white shadow-md transition-all duration-300 group-hover:ring-[#FA7275]/30 group-hover:shadow-lg group-hover:scale-105"
-            imageClassName="!size-full object-cover"
-          />
-         
-          {/* Glowing dot indicator */}
-          <div className="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-[#FA7275] ring-2 ring-white animate-pulse" />
-          
-
-          {/* File name below image */}
-          <p className="text-sm font-semibold text-gray-900 line-clamp-2 transition-colors duration-300 group-hover:text-[#FA7275] max-w-[96px]">
-            {file.fileName}
+          <p className="text-sm font-medium text-gray-700 line-clamp-2 max-w-[120px] transition-colors duration-200 group-hover:text-[#FA7275]">
+            {displayName}
           </p>
         </div>
 
-        <div className="flex flex-col items-end justify-between gap-3">
-          <ActionDropDown  file = {file} />
-          <div className="rounded-full bg-[#FA7275]/10 px-3 py-1 ring-1 ring-[#FA7275]/20">
+        {/* Right: Actions + date + size */}
+        <div className="flex flex-col items-end gap-2.5 pt-1">
+          <ActionDropDown file={file} />
+
+          <div className="flex flex-col items-end gap-1.5">
             <FormatedDateTime
               date={file.uploadDate}
-              className="!text-xs font-medium text-[#FA7275]"
+              className="!text-xs !font-medium !text-[#FA7275]/90"
             />
-          </div>
-          <div className="rounded-full bg-[#333F4E]/5 px-3 py-1.5 ring-1 ring-[#333F4E]/10">
-          
-            <p className="text-sm font-semibold text-[#333F4E]">
+            <p className="text-sm font-semibold text-gray-900">
               {convertFileSize(file.fileSize || file.size || 0)}
             </p>
-            
           </div>
         </div>
       </div>
 
-      <div className="relative flex flex-col gap-2">
-        <div className="flex items-center gap-2">
-          <div className="h-6 w-6 rounded-full bg-[#FA7275] flex items-center justify-center text-white text-xs font-semibold shadow-sm">
-            {file.owner?.fullName?.charAt(0)?.toUpperCase() || "U"}
-          
-      </div>
-      </div>
+      {/* Bottom section with owner */}
+      <div className="relative flex items-center gap-2 pt-3 border-t border-gray-100/80">
+        <div className="h-7 w-7 rounded-full bg-gradient-to-br from-[#FA7275] to-[#FA7275]/80 flex items-center justify-center text-white text-xs font-bold shadow-sm ring-2 ring-[#FA7275]/10">
+          {file.owner?.fullName?.charAt(0)?.toUpperCase() || "U"}
+        </div>
+        <p className="text-xs font-medium text-gray-500 truncate">
+          {file.owner?.fullName || "Unknown"}
+        </p>
       </div>
     </Link>
   );

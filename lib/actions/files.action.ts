@@ -98,3 +98,40 @@ export const getFiles = async () => {
     handleError(error, "failed to get files");
   }
 };
+
+export const renameFile = async ({fileId , name , path , extension} : RenameFileProps) => {
+  const {database} = await createAdminClient();
+  try{
+    // Get the current file to extract extension if not provided
+    const currentFile = await database.getDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.filesCollectionId,
+      fileId
+    );
+
+    // Extract extension from current fileName if extension is not provided or undefined
+    const fileExtension = extension || currentFile.fileName.split('.').pop() || '';
+    
+    console.log('File Extension:', fileExtension);
+    console.log('Provided Extension:', extension);
+    console.log('Current FileName:', currentFile.fileName);
+    console.log('New Name:', name);
+    
+    const newName = `${name}.${fileExtension}`;
+    
+    const updatedFile = await database.updateDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.filesCollectionId,
+      fileId,
+      {
+        fileName : newName,
+      }
+    );
+    
+    revalidatePath(path);
+    return parseStringify(updatedFile); 
+  }
+  catch (error){
+    handleError(error , "failed to rename file");
+  }
+}

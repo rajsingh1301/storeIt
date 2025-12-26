@@ -1,4 +1,5 @@
 "use client";
+import { renameFile } from "@/lib/actions/files.action";
 import {
   Dialog,
   DialogContent,
@@ -25,6 +26,8 @@ import { is } from "zod/v4/locales";
 import Link from "next/link";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { rename } from "fs";
+import { usePathname } from "next/navigation";
 
 interface FileDocument extends Models.Document {
   name?: string;
@@ -45,12 +48,48 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
   const [action, setAction] = useState<ActionType | null>(null);
   const [name, setName] = useState(file.fileName);
   const [Isloading, setIsLoading] = useState(false);
+  const path = usePathname();
   const closeAllModels = () => {
     setIsModelOpen(false);
     setIsDropdownOpen(false);
     setAction(null);
     setName(file.fileName);
-  }
+  };
+  const handleAction = async () => {
+    if (!action) return;
+    setIsLoading(true);
+    let success = false;
+
+    // Extract extension from fileName for rename action
+    const fileExtension =
+      file.fileName?.split(".").pop() || file.extension || "";
+    // Remove extension from name if user included it
+    const nameWithoutExt = name?.replace(/\.[^/.]+$/, "") || "";
+
+    const actions = {
+      rename: () =>
+        renameFile({
+          fileId: file.$id,
+          name: nameWithoutExt || file.fileName?.replace(/\.[^/.]+$/, "") || "",
+          extension: fileExtension,
+          path,
+        }),
+      share: () => {
+        /* share logic */
+      },
+      delete: () => {
+        /* delete logic */
+      },
+      details: () => {
+        /* details logic */
+      },
+    };
+    success = await actions[action.value as keyof typeof actions]();
+    if (success) {
+      closeAllModels();
+    }
+    setIsLoading(false);
+  };
   const renderDialogContent = () => {
     if (!action) return null;
 
@@ -77,11 +116,14 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
             <Button
               onClick={closeAllModels}
               variant="outline"
-              className="h-[52px] flex-1 rounded-full bg-white text-[#FA7275] hover:bg-transparent"
+              className="h-[52px] flex-1 rounded-full bg-white text-gray-800 hover:bg-transparent "
             >
               Cancel
             </Button>
-            <Button className="primary-btn mx-0 h-[52px] w-full flex-1 ">
+            <Button
+              className="primary-btn mx-0 h-[52px] w-full flex-1 rounded-full bg-white text-red-800 "
+              onClick={handleAction}
+            >
               <p className="capitalize">{label}</p>
               {Isloading && (
                 <Image
