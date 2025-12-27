@@ -85,13 +85,13 @@ export const getFiles = async () => {
     }
 
     const queries = createQueries(currentUser);
-    console.log({currentUser , queries}); // Debugging line to check queries
+    console.log({ currentUser, queries }); // Debugging line to check queries
     const files = await database.listDocuments(
       appWriteConfig.databaseId,
       appWriteConfig.filesCollectionId,
       queries
     );
-        console.log({files}); // Debugging line to check queries
+    console.log({ files }); // Debugging line to check queries
 
     return parseStringify(files);
   } catch (error) {
@@ -99,9 +99,14 @@ export const getFiles = async () => {
   }
 };
 
-export const renameFile = async ({fileId , name , path , extension} : RenameFileProps) => {
-  const {database} = await createAdminClient();
-  try{
+export const renameFile = async ({
+  fileId,
+  name,
+  path,
+  extension,
+}: RenameFileProps) => {
+  const { database } = await createAdminClient();
+  try {
     // Get the current file to extract extension if not provided
     const currentFile = await database.getDocument(
       appWriteConfig.databaseId,
@@ -110,28 +115,28 @@ export const renameFile = async ({fileId , name , path , extension} : RenameFile
     );
 
     // Extract extension from current fileName if extension is not provided or undefined
-    const fileExtension = extension || currentFile.fileName.split('.').pop() || '';
-    
-    console.log('File Extension:', fileExtension);
-    console.log('Provided Extension:', extension);
-    console.log('Current FileName:', currentFile.fileName);
-    console.log('New Name:', name);
-    
+    const fileExtension =
+      extension || currentFile.fileName.split(".").pop() || "";
+
+    console.log("File Extension:", fileExtension);
+    console.log("Provided Extension:", extension);
+    console.log("Current FileName:", currentFile.fileName);
+    console.log("New Name:", name);
+
     const newName = `${name}.${fileExtension}`;
-    
+
     const updatedFile = await database.updateDocument(
       appWriteConfig.databaseId,
       appWriteConfig.filesCollectionId,
       fileId,
       {
-        fileName : newName,
+        fileName: newName,
       }
     );
-    
+
     revalidatePath(path);
-    return parseStringify(updatedFile); 
+    return parseStringify(updatedFile);
+  } catch (error) {
+    handleError(error, "failed to rename file");
   }
-  catch (error){
-    handleError(error , "failed to rename file");
-  }
-}
+};
