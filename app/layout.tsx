@@ -27,10 +27,21 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black`}
       >
-                <div className="p-5 max-w-[1400px] mx-auto">
-          {children}
-        </div>
+        <div className="p-5 max-w-[1400px] mx-auto">{children}</div>
       </body>
     </html>
   );
 }
+// {
+//   return (
+//     <html lang="en">
+//       <body
+//         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-white text-black`}
+//       >
+//                 <div className="p-5 max-w-[1400px] mx-auto">
+//           {children}
+//         </div>
+//       </body>
+//     </html>
+//   );
+// }
