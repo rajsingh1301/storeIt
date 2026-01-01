@@ -34,7 +34,7 @@ const page = async ({ params }: SearchParamProps) => {
       ) : (
         <p className="body-1 mt-10 text-center text-light-200 ">
           {" "}
-          No files uploaded
+          No files uploaded here 
         </p>
       )}
     </div>
