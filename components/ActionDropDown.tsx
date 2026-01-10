@@ -70,7 +70,7 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
       rename: () =>
         renameFile({
           fileId: file.$id,
-          name: nameWithoutExt || file.fileName?.replace(/\.[^/.]+$/, "") || "",
+          name: nameWithoutExt,
           extension: fileExtension,
           path,
         }),
