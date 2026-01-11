@@ -52,6 +52,9 @@
     @apply text-[16px] leading-[24px] font-normal;
 
   }
+  .body-2{
+    @apply text-[14px] leading-[20px] font-normal;
+  }
 }
 
 

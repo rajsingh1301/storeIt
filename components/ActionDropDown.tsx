@@ -114,7 +114,7 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
         )}
         {value === 'details' && <FileDetails file={file} />}
 
-        {["rename", "share", "delete", "details"].includes(value) && (
+        {["rename", "share", "delete"].includes(value) && (
           <div className="flex flex-col gap-3">
             <Button
               onClick={closeAllModels}
