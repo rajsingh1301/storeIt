@@ -28,12 +28,14 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { rename } from "fs";
 import { usePathname } from "next/navigation";
+import { FileDetails } from "./ui/ActionModalConstent";
 
 interface FileDocument extends Models.Document {
   name?: string;
   fileName?: string;
   url: string;
   type: string;
+  bucketFileId: string;
   extension: string;
   size?: number;
   fileSize?: number;
@@ -110,6 +112,7 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
             className="h-11 px-4 bg-gray-100 border-0 rounded-xl text-base focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         )}
+        {value === 'details' && <FileDetails file={file} />}
 
         {["rename", "share", "delete", "details"].includes(value) && (
           <div className="flex flex-col gap-3">
