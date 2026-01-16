@@ -28,7 +28,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { rename } from "fs";
 import { usePathname } from "next/navigation";
-import { FileDetails } from "./ui/ActionModalConstent";
+import { FileDetails, ShareInput } from "./ui/ActionModalConstent";
 
 interface FileDocument extends Models.Document {
   name?: string;
@@ -50,6 +50,7 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
   const [action, setAction] = useState<ActionType | null>(null);
   const [name, setName] = useState(file.fileName);
   const [Isloading, setIsLoading] = useState(false);
+  const [email, setEmail] = useState([]);
   const path = usePathname();
   const closeAllModels = () => {
     setIsModelOpen(false);
@@ -57,6 +58,7 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
     setAction(null);
     setName(file.fileName);
   };
+  const handleRemoveUser = () => {};
   const handleAction = async () => {
     if (!action) return;
     setIsLoading(true);
@@ -67,7 +69,6 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
       file.fileName?.split(".").pop() || file.extension || "";
     // Remove extension from name if user included it
     const nameWithoutExt = name?.replace(/\.[^/.]+$/, "") || "";
-
     const actions = {
       rename: () =>
         renameFile({
@@ -112,7 +113,14 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
             className="h-11 px-4 bg-gray-100 border-0 rounded-xl text-base focus-visible:ring-0 focus-visible:ring-offset-0"
           />
         )}
-        {value === 'details' && <FileDetails file={file} />}
+        {value === "details" && <FileDetails file={file} />}
+        {value === "share" && (
+          <ShareInput
+            file={file}
+            onInputChange={setEmail}
+            onRemove={handleRemoveUser}
+          />
+        )}
 
         {["rename", "share", "delete"].includes(value) && (
           <div className="flex flex-col gap-3">
