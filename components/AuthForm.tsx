@@ -53,24 +53,24 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
   });
 
   const onSubmit = async (values: FormValues) => {
-  setIsLoading(true);
-  setErrorMessage("");
+    setIsLoading(true);
+    setErrorMessage("");
 
-  try {
-    const user =
-    type === "sign-up" ?   await createAccount({
-      fullName: values.fullName || "",
-      email: values.email ,
-    }): await signInUser({email :values.email}); 
+    try {
+      const user =
+        type === "sign-up" ? await createAccount({
+          fullName: values.fullName || "",
+          email: values.email,
+        }) : await signInUser({ email: values.email });
 
-    setAccountId(user.accountId);
-  } catch (error: any) {
-    console.error("Full error:", error);
-    setErrorMessage(error?.message || "Something went wrong");
-  } finally {
-    setIsLoading(false);
-  }
-};
+      setAccountId(user.accountId);
+    } catch (error: any) {
+      console.error("Full auth error:", error);
+      setErrorMessage(error?.response?.message || error?.message || "Something went wrong");
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   return (
     <>

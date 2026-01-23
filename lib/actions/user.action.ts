@@ -16,7 +16,7 @@ const getUserByEmail = async (email: string) => {
   const result = await database.listDocuments(
     appWriteConfig.databaseId,
     appWriteConfig.usersCollectionId,
-    [Query.equal("email", [email])]
+    [Query.equal("email", email)]
   );
   return result.total > 0 ? result.documents[0] : null;
 };
@@ -31,6 +31,7 @@ export const sendEmailOTP = async ({ email }: { email: string }) => {
     const session = await account.createEmailToken(ID.unique(), email);
     return session.userId;
   } catch (error) {
+    console.error("Error sending OTP:", error);
     handleError(error, "failed to send otp");
   }
 };
@@ -49,17 +50,17 @@ export const createAccount = async ({
   }
   if (!existingUser) {
     const { database } = await createAdminClient();
-    await database.createDocument({
-      databaseId: appWriteConfig.databaseId,
-      collectionId: appWriteConfig.usersCollectionId,
-      documentId: ID.unique(),
-      data: {
+    await database.createDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.usersCollectionId,
+      ID.unique(),
+      {
         fullName,
         email,
         avatar: avatarPlaceholderUrl,
         accountId,
-      },
-    });
+      }
+    );
   }
   return parseStringify({ accountId });
 };

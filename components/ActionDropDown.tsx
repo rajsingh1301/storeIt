@@ -1,5 +1,5 @@
-"use client";
-import { renameFile } from "@/lib/actions/files.action";
+ "use client";
+import { renameFile, updateFileUsers } from "@/lib/actions/files.action";
 import {
   Dialog,
   DialogContent,
@@ -21,14 +21,14 @@ import { actionsDropdownItems } from "@/constants";
 import { constructDownloadUrl } from "@/lib/utils";
 import Image from "next/image";
 import { Models } from "node-appwrite";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { is } from "zod/v4/locales";
 import Link from "next/link";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { rename } from "fs";
 import { usePathname } from "next/navigation";
-import { FileDetails, ShareInput } from "./ui/ActionModalConstent";
+import { FileDetails, ShareInput } from "./ui/ActionModalContent";
 
 interface FileDocument extends Models.Document {
   name?: string;
@@ -43,6 +43,7 @@ interface FileDocument extends Models.Document {
   owner: {
     fullName: string;
   };
+  users?: string[];
 }
 const ActionDropDown = ({ file }: { file: FileDocument }) => {
   const [IsModelOpen, setIsModelOpen] = useState(false);
@@ -50,15 +51,31 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
   const [action, setAction] = useState<ActionType | null>(null);
   const [name, setName] = useState(file.fileName);
   const [Isloading, setIsLoading] = useState(false);
-  const [email, setEmail] = useState([]);
+  const [newEmails, setNewEmails] = useState<string[]>([]);
+  const [descFile, setDescFile] = useState(file);
   const path = usePathname();
+
+  useEffect(() => {
+    setDescFile(file);
+  }, [file]);
+
   const closeAllModels = () => {
     setIsModelOpen(false);
     setIsDropdownOpen(false);
     setAction(null);
     setName(file.fileName);
+    setNewEmails([]);
   };
-  const handleRemoveUser = () => {};
+  const handleRemoveUser = async (email: string) => {
+    const updatedEmails = descFile.users?.filter((e) => e !== email);
+    const success = await updateFileUsers({
+      fileId: file.$id,
+      emails: updatedEmails!,
+      path,
+    });
+    if (success) setDescFile({ ...descFile, users: updatedEmails });
+    closeAllModels();
+  };
   const handleAction = async () => {
     if (!action) return;
     setIsLoading(true);
@@ -77,9 +94,15 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
           extension: fileExtension,
           path,
         }),
-      share: () => {
-        /* share logic */
-      },
+      share: () =>
+        updateFileUsers({
+          fileId: file.$id,
+          emails: [
+            ...(descFile.users || []),
+            ...newEmails.filter((email) => email.trim() !== ""),
+          ],
+          path,
+        }),
       delete: () => {
         /* delete logic */
       },
@@ -116,33 +139,32 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
         {value === "details" && <FileDetails file={file} />}
         {value === "share" && (
           <ShareInput
-            file={file}
-            onInputChange={setEmail}
+            file={descFile}
+            onInputChange={setNewEmails}
             onRemove={handleRemoveUser}
           />
         )}
 
         {["rename", "share", "delete"].includes(value) && (
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col gap-3 md:flex-row">
             <Button
               onClick={closeAllModels}
-              variant="outline"
-              className="h-[52px] flex-1 rounded-full bg-white text-gray-800 hover:bg-transparent "
+              className="h-[52px] flex-1 rounded-full bg-white text-gray-500 border border-gray-200 hover:bg-gray-50 hover:text-gray-900 transition-all font-medium shadow-sm hover:shadow-md"
             >
               Cancel
             </Button>
             <Button
-              className="primary-btn mx-0 h-[52px] w-full flex-1 rounded-full bg-white text-red-800 "
+              className="primary-btn mx-0 h-[52px] w-full flex-1 rounded-full bg-[#FA7275] hover:bg-[#D95F62] text-white shadow-lg shadow-[#FA7275]/40 transition-all hover:-translate-y-0.5"
               onClick={handleAction}
             >
-              <p className="capitalize">{label}</p>
+              <p className="capitalize font-semibold">{label}</p>
               {Isloading && (
                 <Image
                   src="/assets/icons/loader.svg"
                   alt="loading"
-                  width={16}
-                  height={16}
-                  className="ml-2 animate-spin"
+                  width={24}
+                  height={24}
+                  className="ml-2 animate-spin opacity-80"
                 />
               )}
             </Button>

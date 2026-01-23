@@ -71,12 +71,40 @@ export const uploadFile = async ({
     handleError(error, "failed to upload file");
   }
 };
-const createQueries = (currentUser: Models.Document) => {
-  const queries = [Query.equal("owner", [currentUser.$id])];
+const createQueries = (
+  currentUser: Models.Document,
+  types: string[],
+  searchText: string,
+  sort: string,
+  limit?: number
+) => {
+  const queries = [
+    Query.or([
+      Query.equal("owner", [currentUser.$id]),
+      Query.contains("users", [currentUser.email]),
+    ]),
+  ];
+
+  if (types.length > 0) queries.push(Query.equal("type", types));
+  if (searchText) queries.push(Query.contains("fileName", searchText));
+  if (limit) queries.push(Query.limit(limit));
+
+  if (sort) {
+    const [sortBy, orderBy] = sort.split("-");
+    queries.push(
+      orderBy === "asc" ? Query.orderAsc(sortBy) : Query.orderDesc(sortBy)
+    );
+  }
+
   return queries;
 };
 
-export const getFiles = async () => {
+export const getFiles = async ({
+  types = [],
+  searchText = "",
+  sort = "$createdAt-desc",
+  limit,
+}: GetFilesProps) => {
   const { database } = await createAdminClient();
   try {
     const currentUser = await getUserProfile();
@@ -84,15 +112,14 @@ export const getFiles = async () => {
       throw new Error("User not authenticated");
     }
 
-    const queries = createQueries(currentUser);
-    console.log({ currentUser, queries }); // Debugging line to check queries
+    const queries = createQueries(currentUser, types, searchText, sort, limit);
+    
     const files = await database.listDocuments(
       appWriteConfig.databaseId,
       appWriteConfig.filesCollectionId,
       queries
     );
-    console.log({ files }); // Debugging line to check queries
-
+    
     return parseStringify(files);
   } catch (error) {
     handleError(error, "failed to get files");
@@ -131,6 +158,30 @@ export const renameFile = async ({
       fileId,
       {
         fileName: newName,
+      }
+    );
+
+    revalidatePath(path);
+    return parseStringify(updatedFile);
+  } catch (error) {
+    handleError(error, "failed to rename file");
+  }
+};
+
+export const updateFileUsers = async ({
+  fileId,
+  emails,
+  path,
+}: UpdateFileUsersProps) => {
+  const { database } = await createAdminClient();
+
+  try {
+    const updatedFile = await database.updateDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.filesCollectionId,
+      fileId,
+      {
+        users: emails,
       }
     );
 
