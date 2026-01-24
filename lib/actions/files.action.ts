@@ -8,6 +8,7 @@ import { constructFileUrl, getFileType, parseStringify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { getUserProfile } from "@/lib/actions/user.action";
 import { log } from "console";
+import { success } from "zod";
 
 const handleError = (error: unknown, message: string) => {
   console.log(error, message);
@@ -187,6 +188,29 @@ export const updateFileUsers = async ({
 
     revalidatePath(path);
     return parseStringify(updatedFile);
+  } catch (error) {
+    handleError(error, "failed to rename file");
+  }
+};
+export const deleteFile = async ({
+  fileId,
+  bucketFileId,
+  path,
+}: DeleteFileProps) => {
+  const { database , storage   } = await createAdminClient();
+
+  try {
+    const deleteFile = await database.deleteDocument(
+      appWriteConfig.databaseId,
+      appWriteConfig.filesCollectionId,
+      fileId
+    );
+if(deleteFile){
+      await storage.deleteFile(appWriteConfig.bucketId, bucketFileId);
+    }
+    revalidatePath(path);
+    return parseStringify({status : "success"  })
+    
   } catch (error) {
     handleError(error, "failed to rename file");
   }

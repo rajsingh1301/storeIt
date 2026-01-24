@@ -1,5 +1,5 @@
  "use client";
-import { renameFile, updateFileUsers } from "@/lib/actions/files.action";
+import { deleteFile, renameFile, updateFileUsers } from "@/lib/actions/files.action";
 import {
   Dialog,
   DialogContent,
@@ -104,7 +104,11 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
           path,
         }),
       delete: () => {
-        /* delete logic */
+       deleteFile({
+          fileId: file.$id,
+          bucketFileId: file.bucketFileId,
+          path,
+        })
       },
       details: () => {
         /* details logic */
@@ -143,6 +147,12 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
             onInputChange={setNewEmails}
             onRemove={handleRemoveUser}
           />
+        )}
+        {value ==="delete" && (
+          <p className="text-center text-[#333F4E] ">
+            Are you sure you want to delete{` `}
+            <span className="font-medium text-[#EA6365]">{file.fileName} </span> ?
+          </p>
         )}
 
         {["rename", "share", "delete"].includes(value) && (
