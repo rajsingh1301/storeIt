@@ -30,7 +30,7 @@ export const uploadFile = async ({
     const bucketFile = await storage.createFile(
       appWriteConfig.bucketId,
       ID.unique(),
-      inputFile
+      inputFile,
     );
 
     // Generate a numeric user ID from the string ownerId
@@ -38,7 +38,7 @@ export const uploadFile = async ({
       Math.abs(
         ownerId.split("").reduce((acc, char) => {
           return acc * 31 + char.charCodeAt(0);
-        }, 0)
+        }, 0),
       ) % 2147483647; // Keep within 32-bit integer range
 
     const fileDocument = {
@@ -59,7 +59,7 @@ export const uploadFile = async ({
         appWriteConfig.databaseId,
         appWriteConfig.filesCollectionId,
         ID.unique(),
-        fileDocument
+        fileDocument,
       )
       .catch(async (error: unknown) => {
         // If creating the document fails, delete the uploaded file to avoid orphaned files
@@ -77,7 +77,7 @@ const createQueries = (
   types: string[],
   searchText: string,
   sort: string,
-  limit?: number
+  limit?: number,
 ) => {
   const queries = [
     Query.or([
@@ -93,7 +93,7 @@ const createQueries = (
   if (sort) {
     const [sortBy, orderBy] = sort.split("-");
     queries.push(
-      orderBy === "asc" ? Query.orderAsc(sortBy) : Query.orderDesc(sortBy)
+      orderBy === "asc" ? Query.orderAsc(sortBy) : Query.orderDesc(sortBy),
     );
   }
 
@@ -103,7 +103,7 @@ const createQueries = (
 export const getFiles = async ({
   types = [],
   searchText = "",
-  sort = "$createdAt-desc",
+  sort = "$createdAt-desc",  
   limit,
 }: GetFilesProps) => {
   const { database } = await createAdminClient();
@@ -114,13 +114,13 @@ export const getFiles = async ({
     }
 
     const queries = createQueries(currentUser, types, searchText, sort, limit);
-    
+
     const files = await database.listDocuments(
       appWriteConfig.databaseId,
       appWriteConfig.filesCollectionId,
-      queries
+      queries,
     );
-    
+
     return parseStringify(files);
   } catch (error) {
     handleError(error, "failed to get files");
@@ -139,7 +139,7 @@ export const renameFile = async ({
     const currentFile = await database.getDocument(
       appWriteConfig.databaseId,
       appWriteConfig.filesCollectionId,
-      fileId
+      fileId,
     );
 
     // Extract extension from current fileName if extension is not provided or undefined
@@ -159,7 +159,7 @@ export const renameFile = async ({
       fileId,
       {
         fileName: newName,
-      }
+      },
     );
 
     revalidatePath(path);
@@ -183,7 +183,7 @@ export const updateFileUsers = async ({
       fileId,
       {
         users: emails,
-      }
+      },
     );
 
     revalidatePath(path);
@@ -197,20 +197,19 @@ export const deleteFile = async ({
   bucketFileId,
   path,
 }: DeleteFileProps) => {
-  const { database , storage   } = await createAdminClient();
+  const { database, storage } = await createAdminClient();
 
   try {
     const deleteFile = await database.deleteDocument(
       appWriteConfig.databaseId,
       appWriteConfig.filesCollectionId,
-      fileId
+      fileId,
     );
-if(deleteFile){
+    if (deleteFile) {
       await storage.deleteFile(appWriteConfig.bucketId, bucketFileId);
     }
     revalidatePath(path);
-    return parseStringify({status : "success"  })
-    
+    return parseStringify({ status: "success" });
   } catch (error) {
     handleError(error, "failed to rename file");
   }
