@@ -3,6 +3,7 @@ import React from "react";
 import { Button } from "./ui/button";
 import { signOutUser } from "@/lib/actions/user.action";
 import FileUploader from "./FileUploader";
+import Search from "./Search";
 
 const Header = ({
   userId,
@@ -13,7 +14,9 @@ const Header = ({
 }) => {
   return (
     <header className=" hidden items-center justify-between gap-5 p-5 sm:flex lg:py-7 xl:gap-10">
-      <div className="text-lg font-medium text-black">Search</div>
+      <div className="flex-1 text-lg font-medium text-black">
+        <Search />
+      </div>
 
       <div className="flex items-center gap-4">
         <span className="text-lg font-medium ">

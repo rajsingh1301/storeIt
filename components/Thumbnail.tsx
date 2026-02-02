@@ -21,7 +21,7 @@ const Thumbnail = ({
     <figure
       className={cn(
         " flex-center size-[50px] min-w-[50px] overflow-hidden rounded-full bg-[#FA7275]/10",
-        className
+        className,
       )}
     >
       <Image
@@ -30,9 +30,11 @@ const Thumbnail = ({
         width={100}
         height={100}
         className={cn(
-          "size-8 object-contain",
+          "size-8",
           imageClassName,
-          isImage && "size-full object-cover object-center "
+          isImage
+            ? "size-full object-cover object-center"
+            : "size-8 object-contain",
         )}
       />
     </figure>
