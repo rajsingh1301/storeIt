@@ -65,19 +65,19 @@ export const sortTypes = [
   },
   {
     label: "Name (A-Z)",
-    value: "name-asc",
+    value: "fileName-asc",
   },
   {
     label: "Name (Z-A)",
-    value: "name-desc",
+    value: "fileName-desc",
   },
   {
     label: "Size (Highest)",
-    value: "size-desc",
+    value: "fileSize-desc",
   },
   {
     label: "Size (Lowest)",
-    value: "size-asc",
+    value: "fileSize-asc",
   },
 ];
 

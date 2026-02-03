@@ -5,16 +5,14 @@ import { Models } from "node-appwrite";
 import Card from "@/components/Card";
 import { getFileTypesParams } from "@/lib/utils";
 
-const page = async ({ searchParams,params }: SearchParamProps) => {
-
+const page = async ({ searchParams, params }: SearchParamProps) => {
   const type = ((await params)?.type as string) || " ";
-const searchText = ((await searchParams)?.query) as string || " ";
-const sort = ((await searchParams)?.sort ) as string || " ";
-  
+  const searchText = ((await searchParams)?.query as string) || "";
+  const sort = ((await searchParams)?.sort as string) || "$createdAt-desc";
+
   const types = getFileTypesParams(type) as FileType[];
 
-  
-  const files = await getFiles({ types, searchText: "", sort: "" });
+  const files = await getFiles({ types, searchText, sort });
   return (
     <div className=" mx-auto flex w-full max-w-7xl flex-col items-center gap-8 ">
       <section className="w-full">
@@ -25,11 +23,12 @@ const sort = ((await searchParams)?.sort ) as string || " ";
             Total : <span>0 MB</span>{" "}
           </p>
           <div className="mt-5 flex items-center sm:mt-0 sm:gap-3 ">
-            <p className="text-[16px] leading-5 font-normal hidden sm:block text-[]">
+            <p className="text-[16px] leading-5 font-normal hidden sm:block text-gray-400">
               Sort by:
             </p>
-            <Sort />
+            <Sort defaultValue={sort} />
           </div>
+
         </div>
       </section>
       {/* render files here  */}

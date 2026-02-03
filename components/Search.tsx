@@ -2,12 +2,13 @@
 import React, { useEffect, useState } from "react";
 import Image from "next/image";
 import { Input } from "./ui/input";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { getFiles } from "@/lib/actions/files.action";
 import { Models } from "node-appwrite";
 import { fa } from "zod/v4/locales";
 import Thumbnail from "./Thumbnail";
 import FormatedDateTime from "./FormatedDateTime";
+import { useDebounce } from 'use-debounce';
 
 const Search = () => {
   const [query, setQuery] = useState("");
@@ -16,17 +17,22 @@ const Search = () => {
   const [results, setResults] = useState<Models.Document[]>([]);
   const [open, setOpen] = useState(false);
   const router = useRouter();
-
-  
+  const path = usePathname()
+    const [debounceQuery] = useDebounce(query, 300);
 
   useEffect(() => {
     const fetchFiles = async () => {
-      const files = await getFiles({ searchText: query });
+      if(debounceQuery.length==0) {
+        setResults([]);
+        setOpen(false);
+        return router.push(path.replace(searchParams.toString(), ""));
+      }
+      const files = await getFiles({types:[], searchText: debounceQuery });
       setResults(files.documents);
       setOpen(true);
     };
     fetchFiles();
-  }, [query]);
+  }, [debounceQuery]);
 
   useEffect(() => {
     if (!searchQuery) {
@@ -35,11 +41,13 @@ const Search = () => {
       setQuery(searchQuery);
     }
   }, [searchQuery]);
-  const handleClickItem = (files : Models.Document) =>{
-    setOpen(false); 
+  const handleClickItem = (files: Models.Document) => {
+    setOpen(false);
     setResults([]);
-    router.push(`${files.type ==="video" ? "media" : files.type + "s"}?query= ${query}`)
-  }
+    router.push(
+      `${files.type === 'video' || files.type === 'audio' ? 'media' : files.type + 's'}?query=${query}`,
+    );
+  };
 
   return (
     <div className="relative w-full">
@@ -64,6 +72,7 @@ const Search = () => {
                 <li
                   key={file.$id}
                   className="body-2 text-black hover:bg-gray-50 p-2 rounded-lg cursor-pointer flex items-center justify-between "
+                  onClick={() => handleClickItem(file)}
                 >
                   <div className="flex items-center cursor-pointer gap-2">
                     <Thumbnail
@@ -72,11 +81,14 @@ const Search = () => {
                       url={file.url}
                       className="size-9 min-w-9 object-cover"
                     />
-                    <p className="text-[14px] leading-[20px] font-semibold line-clamp-1 text-[#333F4E] max-w-[200px]" >
+                    <p className="text-[14px] leading-[20px] font-semibold line-clamp-1 text-[#333F4E] max-w-[200px]">
                       {file.fileName}
                     </p>
                   </div>
-                  <FormatedDateTime date = {file.$createdAt} className="text-gray-400 text-sm" />
+                  <FormatedDateTime
+                    date={file.$createdAt}
+                    className="text-gray-400 text-sm"
+                  />
                 </li>
               ))
             ) : (
