@@ -12,10 +12,10 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <main className="flex h-screen">
       <Sidebar {...CurrentUser} />
-      <section className="flex h-full flex-1 flex-col ">
+      <section className="flex h-full flex-1 flex-col overflow-hidden">
         <MobileNavigation {...CurrentUser} />
-         <Header userId={ CurrentUser.$id }  accountId={CurrentUser.accountId} />
-        <div className="main-content "> {children}</div>
+        <Header userId={CurrentUser.$id} accountId={CurrentUser.accountId} />
+        <div className="main-content flex-1 overflow-auto bg-gray-50/30"> {children}</div>
       </section>
       <Toaster />
     </main>

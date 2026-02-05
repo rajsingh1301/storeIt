@@ -84,4 +84,4 @@ export const sortTypes = [
 export const avatarPlaceholderUrl =
   "https://static.vecteezy.com/system/resources/thumbnails/027/951/130/small/africa-guy-3d-avatar-character-illustrations-png.png";
 
-export const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+export const MAX_FILE_SIZE = 55 * 1024 * 1024; // 50MB

@@ -7,8 +7,6 @@ import { ID, Models, Query } from "node-appwrite";
 import { constructFileUrl, getFileType, parseStringify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { getUserProfile } from "@/lib/actions/user.action";
-import { log } from "console";
-import { success } from "zod";
 
 const handleError = (error: unknown, message: string) => {
   console.log(error, message);
@@ -24,8 +22,22 @@ export const uploadFile = async ({
   const { storage, database } = await createAdminClient();
 
   try {
+    // Check current storage usage
+    const totalSpace = await getTotalSpaceUsed();
+    const currentUsage = totalSpace?.used || 0;
+    const MAX_STORAGE = 2 * 1024 * 1024 * 1024; // 2GB in bytes
+    const fileSize = (file as any).buffer.length;
+
+    // Check if upload would exceed storage limit
+    if (currentUsage + fileSize > MAX_STORAGE) {
+      const availableSpace = MAX_STORAGE - currentUsage;
+      throw new Error(
+        `Not enough storage space. Available: ${(availableSpace / (1024 * 1024)).toFixed(2)}MB, Required: ${(fileSize / (1024 * 1024)).toFixed(2)}MB`,
+      );
+    }
+
     // Convert plain array back to Buffer
-    const buffer = Buffer.from(file.buffer);
+    const buffer = Buffer.from((file as any).buffer);
     const inputFile = InputFile.fromBuffer(buffer, file.name);
     const bucketFile = await storage.createFile(
       appWriteConfig.bucketId,
@@ -82,7 +94,7 @@ const createQueries = (
   const queries = [
     Query.or([
       Query.equal("owner", [currentUser.$id]),
-      Query.contains("users", [currentUser.email]),
+      Query.contains("users", [(currentUser as any).email]),
     ]),
   ];
 
@@ -103,7 +115,7 @@ const createQueries = (
 export const getFiles = async ({
   types = [],
   searchText = "",
-  sort = "$createdAt-desc",  
+  sort = "$createdAt-desc",
   limit,
 }: GetFilesProps) => {
   const { database } = await createAdminClient();
@@ -214,3 +226,45 @@ export const deleteFile = async ({
     handleError(error, "failed to rename file");
   }
 };
+
+export async function getTotalSpaceUsed() {
+  try {
+    const { database } = await createSessionClient();
+    const currentUser = await getUserProfile();
+    if (!currentUser) throw new Error("User is not authenticated.");
+
+    const files = await database.listDocuments(
+      appWriteConfig.databaseId,
+      appWriteConfig.filesCollectionId,
+      [Query.equal("owner", [currentUser.$id])],
+    );
+
+    const totalSpace = {
+      image: { size: 0, latestDate: "" },
+      document: { size: 0, latestDate: "" },
+      video: { size: 0, latestDate: "" },
+      audio: { size: 0, latestDate: "" },
+      other: { size: 0, latestDate: "" },
+      used: 0,
+      all: 2 * 1024 * 1024 * 1024 /* 2GB available bucket storage */,
+    };
+
+    files.documents.forEach((file: Models.Document) => {
+      const fileType = (file as any).type as FileType;
+      const fileSize = (file as any).fileSize || 0;
+      totalSpace[fileType].size += fileSize;
+      totalSpace.used += fileSize;
+
+      if (
+        !totalSpace[fileType].latestDate ||
+        new Date(file.$updatedAt) > new Date(totalSpace[fileType].latestDate)
+      ) {
+        totalSpace[fileType].latestDate = file.$updatedAt;
+      }
+    });
+
+    return parseStringify(totalSpace);
+  } catch (error) {
+    handleError(error, "Error calculating total space used:, ");
+  }
+}
