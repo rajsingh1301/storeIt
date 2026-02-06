@@ -4,12 +4,12 @@ import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
- interface Props {
-    fullName : string;
-    email : string;
-    avatar : string;
- }
-const Sidebar = ({fullName , email , avatar}) => {
+interface Props {
+  fullName: string;
+  email: string;
+  avatar: string;
+}
+const Sidebar = ({ fullName, email, avatar }: Props) => {
   const pathName = usePathname();
   return (
     <aside className=" remove-scrollbar hidden h-screen w-[90px] flex-col overflow-auto px-5 py-7 sm:flex lg:w-[280px] xl:w-[325px]">
@@ -48,19 +48,19 @@ const Sidebar = ({fullName , email , avatar}) => {
         </ul>
       </nav>
       <Image src="/assets/images/files-2.png"
-      alt ="logo"
+        alt="logo"
         width={503}
         height={415}
         className="w-full "
-        />
-        {/*side bar info  */ }
-        <div className="mt-4 flex items-center justify-center gap-2 rounded-full bg-[#FA7275]/10 p-1 text-[#333F4E] lg:justify-start lg:p-3"> 
-            <Image src ={avatarPlaceholderUrl} alt="avatar" width={40} height={40} className="aspect-square w-10 rounded-full object-cover "/>
-            <div className="hidden lg:block">
-            <p className="text-[14px] leading-[20px] font-semibold capitalize">{fullName}</p>
-            <p className="text-[12px] leading-[16px] font-normal">{email}</p>
-            </div>
+      />
+      {/*side bar info  */}
+      <div className="mt-4 flex items-center justify-center gap-2 rounded-full bg-[#FA7275]/10 p-1 text-[#333F4E] lg:justify-start lg:p-3">
+        <Image src={avatarPlaceholderUrl} alt="avatar" width={40} height={40} className="aspect-square w-10 rounded-full object-cover " />
+        <div className="hidden lg:block">
+          <p className="text-[14px] leading-[20px] font-semibold capitalize">{fullName}</p>
+          <p className="text-[12px] leading-[16px] font-normal">{email}</p>
         </div>
+      </div>
     </aside>
   );
 };
