@@ -16,7 +16,7 @@ const getUserByEmail = async (email: string) => {
   const result = await database.listDocuments(
     appWriteConfig.databaseId,
     appWriteConfig.usersCollectionId,
-    [Query.equal("email", email)]
+    [Query.equal("email", email)],
   );
   return result.total > 0 ? result.documents[0] : null;
 };
@@ -59,7 +59,7 @@ export const createAccount = async ({
         email,
         avatar: avatarPlaceholderUrl,
         accountId,
-      }
+      },
     );
   }
   return parseStringify({ accountId });
@@ -87,15 +87,24 @@ export const verifySecret = async ({
   }
 };
 export const getUserProfile = async () => {
-  const { account, database } = await createSessionClient();
-  const result = await account.get();
-  const userData = await database.listDocuments(
-    appWriteConfig.databaseId,
-    appWriteConfig.usersCollectionId,
-    [Query.equal("accountId", result.$id)]
-  );
-  if (userData === null) throw new Error("User data not found");
-  return parseStringify(userData.documents[0]);
+  try {
+    const { account, database } = await createSessionClient();
+    const result = await account.get();
+    const userData = await database.listDocuments(
+      appWriteConfig.databaseId,
+      appWriteConfig.usersCollectionId,
+      [Query.equal("accountId", result.$id)],
+    );
+
+    if (!userData || userData.total === 0) {
+      return null;
+    }
+
+    return parseStringify(userData.documents[0]);
+  } catch (error) {
+    console.log("Error getting user profile:", error);
+    return null;
+  }
 };
 
 //logout user
@@ -103,7 +112,7 @@ export const signOutUser = async () => {
   const { account } = await createSessionClient();
   try {
     await account.deleteSession("current");
-    (await cookies()).delete("appwrite-session");
+    (await cookies()).delete("appwrite_session");
   } catch (error) {
     handleError(error, "Failed to sign-out");
   } finally {
@@ -136,7 +145,7 @@ export const getUserById = async (userId: string) => {
     const user = await database.getDocument(
       appWriteConfig.databaseId,
       appWriteConfig.usersCollectionId,
-      userId
+      userId,
     );
     return parseStringify(user);
   } catch (error) {

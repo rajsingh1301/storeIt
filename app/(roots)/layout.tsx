@@ -8,13 +8,13 @@ import { Toaster } from "@/components/ui/sonner";
 
 const layout = async ({ children }: { children: React.ReactNode }) => {
   const CurrentUser = await getUserProfile();
-  if (!CurrentUser) return redirect("/auth/sign-in");
+  if (!CurrentUser) return redirect("/sign-in");
   return (
     <main className="flex h-screen">
       <Sidebar {...CurrentUser} />
       <section className="flex h-full flex-1 flex-col ">
         <MobileNavigation {...CurrentUser} />
-         <Header userId={ CurrentUser.$id }  accountId={CurrentUser.accountId} />
+        <Header userId={CurrentUser.$id} accountId={CurrentUser.accountId} />
         <div className="main-content "> {children}</div>
       </section>
       <Toaster />
