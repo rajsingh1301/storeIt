@@ -9,56 +9,75 @@ import { usePathname } from "next/navigation";
     email : string;
     avatar : string;
  }
-const Sidebar = ({fullName , email , avatar}) => {
+const Sidebar = ({fullName , email , avatar}: Props) => {
   const pathName = usePathname();
   return (
-    <aside className=" remove-scrollbar hidden h-screen w-[90px] flex-col overflow-auto px-5 py-7 sm:flex lg:w-[280px] xl:w-[325px]">
+    <aside className="remove-scrollbar hidden h-screen w-[90px] flex-col overflow-auto px-5 py-7 sm:flex lg:w-[280px] xl:w-[325px] bg-[#1a1f2c] border-r border-[#2a303f]">
       <Link href="/">
-        <Image
-          src="/assets/icons/logo-full-brand.svg"
-          alt="logo"
-          width={160}
-          height={50}
-          className="hidden h-auto lg:block"
-        />
+        <div className="hidden lg:flex items-center gap-2 mb-2">
+          <Image
+            src="/assets/icons/logo-brand.svg"
+            alt="logo"
+            width={52}
+            height={52}
+            className="h-auto opacity-90"
+          />
+          <span className="text-[28px] font-bold tracking-tight text-white drop-shadow-sm">FileDock</span>
+        </div>
         <Image
           src="/assets/icons/logo-brand.svg"
           alt="logo2"
-          width={53}
-          height={53}
-          className=" lg:hidden"
+          width={52}
+          height={52}
+          className="lg:hidden opacity-90"
         />
       </Link>
-      <nav className="h5 mt-9 flex-1 gap-1 text-red-400 ">
-        <ul className="flex flex-1 flex-col gap-6">
-          {navItems.map(({ url, name, icon }) => (
+      <nav className="h5 mt-10 flex-1 gap-1">
+        <ul className="flex flex-1 flex-col gap-4">
+          {navItems.map(({ url, name, icon }) => {
+            const isActive = pathName === url;
+            return (
             <li
               key={name}
               className={cn(
-                "flex text-[#333F4E] gap-4 rounded-xl lg:w-full justify-center lg:justify-start items-center h5 lg:px-[30px] h-[52px] lg:rounded-full",
-                pathName === url && "bg-[#FA7275] text-white shadow-drop-2 "
+                "flex text-[#94a3b8] gap-4 rounded-xl lg:w-full justify-center lg:justify-start items-center h5 lg:px-[24px] h-[52px] lg:rounded-2xl transition-all duration-300 relative group",
+                isActive ? "bg-white/5 text-white" : "hover:bg-white/5 hover:text-[#cbd5e1]"
               )}
             >
-              <Link href={url} className="lg:w-full flex items-center gap-4">
-                <Image src={icon} alt={name} width={24} height={24} className={cn("w-6 filter invert opacity-25 ", pathName === url && "invert-0 opacity-100")} />
-                <p className="hidden lg:block">{name}</p>
+              {isActive && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-1.5 h-8 bg-[#FA7275] rounded-r-md shadow-[0_0_12px_#FA7275]" />
+              )}
+              <Link href={url} className="lg:w-full flex items-center gap-4 w-full h-full justify-center lg:justify-start">
+                <Image 
+                  src={icon} 
+                  alt={name} 
+                  width={24} 
+                  height={24} 
+                  className={cn(
+                    "w-6 transition-all duration-300", 
+                    isActive 
+                      ? "brightness-0 invert sepia-[30%] saturate-[150%] hue-rotate-[10deg] opacity-100" 
+                      : "brightness-0 invert sepia-[30%] saturate-[150%] hue-rotate-[10deg] opacity-40 group-hover:opacity-70"
+                  )} 
+                />
+                <p className="hidden lg:block font-medium">{name}</p>
               </Link>
             </li>
-          ))}
+          )})}
         </ul>
       </nav>
       <Image src="/assets/images/files-2.png"
       alt ="logo"
         width={503}
         height={415}
-        className="w-full "
+        className="w-full opacity-60 mix-blend-screen"
         />
         {/*side bar info  */ }
-        <div className="mt-4 flex items-center justify-center gap-2 rounded-full bg-[#FA7275]/10 p-1 text-[#333F4E] lg:justify-start lg:p-3"> 
-            <Image src ={avatarPlaceholderUrl} alt="avatar" width={40} height={40} className="aspect-square w-10 rounded-full object-cover "/>
+        <div className="mt-4 flex items-center justify-center gap-3 rounded-2xl bg-white/5 p-2 text-white border border-white/10 lg:justify-start lg:p-3 backdrop-blur-md"> 
+            <Image src ={avatarPlaceholderUrl} alt="avatar" width={44} height={44} className="aspect-square w-11 rounded-full object-cover border-2 border-white/10"/>
             <div className="hidden lg:block">
-            <p className="text-[14px] leading-[20px] font-semibold capitalize">{fullName}</p>
-            <p className="text-[12px] leading-[16px] font-normal">{email}</p>
+            <p className="text-[14px] leading-[20px] font-semibold capitalize tracking-wide">{fullName}</p>
+            <p className="text-[12px] leading-[16px] font-normal text-[#94a3b8]">{email}</p>
             </div>
         </div>
     </aside>

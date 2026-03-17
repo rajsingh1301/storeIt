@@ -10,34 +10,42 @@ import {
   ChartOptions,
   Plugin,
 } from "chart.js";
+import { calculatePercentage, convertFileSize } from "@/lib/utils";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
-interface StorageData {
-  label: string;
-  value: number;
-  color: string;
-}
-
 interface StorageChartProps {
-  totalStorage?: number;
-  usedStorage?: number;
-  storageBreakdown?: StorageData[];
+  used: number;
+  all: number;
+  image: { size: number; latestDate: string };
+  document: { size: number; latestDate: string };
+  video: { size: number; latestDate: string };
+  audio: { size: number; latestDate: string };
+  other: { size: number; latestDate: string };
 }
 
-const StorageChart: React.FC<StorageChartProps> = ({
-  totalStorage = 400,
-  usedStorage = 326,
-  storageBreakdown = [
-    { label: "Photo", value: 117, color: "#FFB84D" },
-    { label: "Video", value: 117, color: "#5DD3F3" },
-    { label: "Documents", value: 117, color: "#9B9EF8" },
-    { label: "Other", value: 117, color: "#C4C4F3" },
-    { label: "Available", value: 74, color: "#FF9090" },
-  ],
-}) => {
-  const availableStorage = totalStorage - usedStorage;
-  const percentageUsed = Math.round((usedStorage / totalStorage) * 100);
+const StorageChart: React.FC<StorageChartProps> = (totalSpace) => {
+  const { used = 0, all = 2 * 1024 * 1024 * 1024, image, document, video, audio, other } = totalSpace;
+  
+  const availableStorage = all - used;
+  const percentageUsed = calculatePercentage(used);
+  
+  // Custom Neumorphism / Glassmorphism Palette
+  const colors = {
+    available: "#e2e8f0", 
+    images: "#d4b572", // Muted Gold
+    documents: "#2dd4bf", // Soft Teal
+    media: "#a78bfa", // Lavender
+    others: "#94a3b8" // Slate
+  };
+
+  const storageBreakdown = [
+    { label: "Available", value: availableStorage, color: colors.available },
+    { label: "Images", value: image?.size || 0, color: colors.images },
+    { label: "Documents", value: document?.size || 0, color: colors.documents },
+    { label: "Media", value: (video?.size || 0) + (audio?.size || 0), color: colors.media },
+    { label: "Other", value: other?.size || 0, color: colors.others },
+  ];
 
   // Center text plugin
   const centerTextPlugin: Plugin<"doughnut"> = {
@@ -54,53 +62,65 @@ const StorageChart: React.FC<StorageChartProps> = ({
       ctx.textBaseline = "middle";
 
       // Main storage text
-      ctx.font = "bold 48px Inter, sans-serif";
-      ctx.fillStyle = "#1f2937";
-      ctx.fillText(`${availableStorage}GB`, centerX, centerY - 15);
+      const formattedAvailable = convertFileSize(availableStorage);
+      ctx.font = "bold 26px 'JetBrains Mono', monospace";
+      ctx.fillStyle = "#ffffff";
+      ctx.fillText(formattedAvailable, centerX, centerY - 10);
 
       // "Available" text
-      ctx.font = "14px Inter, sans-serif";
-      ctx.fillStyle = "#6b7280";
-      ctx.fillText("Available", centerX, centerY + 20);
+      ctx.font = "500 13px Inter, sans-serif";
+      ctx.fillStyle = "#94a3b8"; // slate-400
+      ctx.fillText("Available", centerX, centerY + 18);
 
       ctx.restore();
     },
   };
 
-  const data = {
-    labels: storageBreakdown.map((item) => item.label),
-    datasets: [
-      {
-        data: storageBreakdown.map((item) => item.value),
-        backgroundColor: storageBreakdown.map((item) => item.color),
+  // Build Concentric Rings
+  const generateConcentricDatasets = () => {
+    // Outer to inner based on array order
+    return storageBreakdown.map((item) => {
+      return {
+        data: [item.value, all - Math.min(item.value, all)], 
+        backgroundColor: [item.color, "transparent"],
         borderWidth: 0,
         borderRadius: 8,
-        spacing: 4,
-      },
-    ],
+        hoverOffset: 2,
+        weight: 1, 
+      };
+    });
+  };
+
+  const data = {
+    labels: storageBreakdown.map((item) => item.label),
+    datasets: generateConcentricDatasets()
   };
 
   const options: ChartOptions<"doughnut"> = {
     responsive: true,
     maintainAspectRatio: true,
-    cutout: "75%",
+    cutout: "70%",
+    layout: {
+      padding: 10
+    },
     plugins: {
       legend: {
         display: false,
       },
       tooltip: {
-        backgroundColor: "white",
-        titleColor: "#1f2937",
-        bodyColor: "#4b5563",
-        borderColor: "#e5e7eb",
+        backgroundColor: "rgba(15, 23, 42, 0.9)", // slate-900 transparent
+        titleColor: "#ffffff",
+        bodyColor: "#cbd5e1",
+        borderColor: "rgba(255, 255, 255, 0.1)",
         borderWidth: 1,
         padding: 12,
-        displayColors: true,
+        displayColors: false,
         callbacks: {
           label: (context) => {
-            const label = context.label || "";
-            const value = context.parsed;
-            return ` ${label}: ${value}GB`;
+            const index = context.datasetIndex;
+            const item = storageBreakdown[index];
+            if (context.dataIndex === 1) return ""; 
+            return ` ${item.label}: ${convertFileSize(item.value)}`;
           },
         },
       },
@@ -108,75 +128,66 @@ const StorageChart: React.FC<StorageChartProps> = ({
   };
 
   return (
-    <div className="w-full max-w-4xl mx-auto bg-white rounded-2xl shadow-sm p-8">
-      <div className="flex items-start justify-between mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800">Storage</h2>
-        <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
-          View details
-        </button>
+    <div className="w-full h-full glassmorphism rounded-[32px] p-6 sm:p-8 flex flex-col transition-all">
+      <div className="flex items-start justify-between mb-6 sm:mb-8">
+        <h2 className="text-xl sm:text-[26px] font-bold text-white tracking-tight drop-shadow-sm">Storage Details</h2>
       </div>
 
-      <div className="flex items-center gap-12">
+      <div className="flex flex-col md:flex-row items-center md:items-start gap-8 flex-1">
         {/* Chart */}
-        <div className="w-[300px] h-[300px] flex-shrink-0">
+        <div className="w-[200px] h-[200px] xl:w-[240px] xl:h-[240px] flex-shrink-0 mx-auto relative filter drop-shadow-[0_0_24px_rgba(45,212,191,0.2)]">
           <Doughnut
             data={data}
             options={options}
-            plugins={[centerTextPlugin]}
+            plugins={[centerTextPlugin as Plugin<"doughnut">]}
           />
         </div>
 
         {/* Legend */}
-        <div className="flex-1">
-          <div className="space-y-3 mb-8">
-            {storageBreakdown.map((item, index) => (
-              <div key={index} className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+        <div className="flex-1 w-full flex flex-col justify-center min-w-0">
+          <div className="grid grid-cols-1 gap-3 mb-6">
+            {storageBreakdown.map((item, index) => {
+              if (item.label === "Available") return null; 
+              return (
+              <div key={index} className="flex items-center justify-between p-3 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/10 group">
+                <div className="flex items-center gap-3 truncate pr-2">
                   <div
-                    className="w-3 h-3 rounded-full"
+                    className="w-4 h-4 rounded-full shadow-[0_0_12px_rgba(255,255,255,0.4)] flex-shrink-0 border border-white/20"
                     style={{ backgroundColor: item.color }}
                   />
-                  <span className="text-gray-700 font-medium">
+                  <span className="text-slate-300 font-semibold text-[15px] truncate group-hover:text-white transition-colors">
                     {item.label}
                   </span>
                 </div>
-                <span className="text-gray-600 font-medium">
-                  {item.value}GB
+                <span className="text-white font-bold text-[15px] flex-shrink-0 mono-number drop-shadow-sm">
+                  {convertFileSize(item.value || 0)}
                 </span>
               </div>
-            ))}
+            )})}
           </div>
 
           {/* Storage Info */}
-          <div className="mt-8 pt-6 border-t border-gray-100">
+          <div className="pt-5 border-t border-white/10">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-lg font-semibold text-gray-800">
-                Available storage
+              <h3 className="text-[14px] font-semibold text-slate-400">
+                Total Capacity
               </h3>
-              <span className="text-2xl font-bold text-gray-800">
-                {100 - percentageUsed}%
+              <span className="text-[20px] font-bold text-white mono-number drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
+                {percentageUsed}%
               </span>
             </div>
 
-            {/* Progress Bar */}
-            <div className="w-full h-3 bg-gray-100 rounded-full overflow-hidden flex mb-3">
+            {/* Progress Bar Neumorphic Inset */}
+            <div className="w-full h-2.5 bg-black/40 rounded-full overflow-hidden mb-3 shadow-[inset_0_2px_4px_rgba(0,0,0,0.5)] border border-white/5">
               <div
-                className="h-full bg-gradient-to-r from-cyan-400 to-blue-400 rounded-full"
-                style={{ width: `${80}%` }}
-              />
-              <div
-                className="h-full bg-gradient-to-r from-rose-400 to-red-400 rounded-full"
-                style={{ width: `${20}%` }}
+                className="h-full bg-gradient-to-r from-[#FA7275] to-[#ffb4b6] rounded-full transition-all duration-500 shadow-[0_0_12px_rgba(250,114,117,0.5)]"
+                style={{ width: `${percentageUsed}%` }}
               />
             </div>
 
-            <p className="text-sm text-gray-600">
-              {usedStorage} GB used of {totalStorage} GB
+            <p className="text-[13px] text-slate-400 font-medium text-center mt-4 tracking-wide">
+              {convertFileSize(used)} used of <span className="mono-number text-slate-300">{convertFileSize(all)}</span>
             </p>
-
-            <button className="w-full mt-4 bg-gray-900 hover:bg-gray-800 text-white font-medium py-3 px-4 rounded-lg transition-colors">
-              Upgrade plan
-            </button>
           </div>
         </div>
       </div>

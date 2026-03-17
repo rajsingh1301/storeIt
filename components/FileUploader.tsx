@@ -53,9 +53,9 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
         // Convert File to array for server action
         const arrayBuffer = await file.arrayBuffer();
         const buffer = Array.from(new Uint8Array(arrayBuffer));
-        const fileData = { buffer, name: file.name };
+        const fileData = { buffer, name: file.name, type: file.type, size: file.size, lastModified: file.lastModified };
 
-        return uploadFile({ file: fileData, ownerId, accountId, path })
+        return uploadFile({ file: fileData as any, ownerId, accountId, path })
           .then((uploadedFile) => {
             if (uploadedFile) {
               setFiles((prevFiles) =>
@@ -106,14 +106,14 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
         <p>Upload</p>
       </Button>
       {files.length > 0 && (
-        <ul className="fixed bottom-10 right-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-white p-7 shadow-drop-3">
-          <h4 className="h4 text-[#333F4E]"> Uploading</h4>
+        <ul className="fixed bottom-10 right-10 z-50 flex size-full h-fit max-w-[480px] flex-col gap-3 rounded-[20px] bg-[#1E293B]/80 backdrop-blur-2xl p-7 shadow-2xl border border-white/10">
+          <h4 className="h4 text-white"> Uploading</h4>
           {files.map((file, index) => {
             const { type, extension } = getFileType(file.name);
             return (
               <li
                 key={`${file.name}-${index}`}
-                className="flex items-center justify-between  gap-3 rounded-xl p-3 shadow-drop-3"
+                className="flex items-center justify-between gap-3 rounded-xl p-3 bg-white/5 border border-white/5"
               >
                 <div className=" flex items-center gap-3">
                   <Thumbnail
@@ -121,13 +121,14 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
                     extension={extension}
                     url={convertFileToUrl(file)}
                   />
-                  <div className=" text-[14px] leading-5 font-semibold mb-2 max-w-[300px]">
+                  <div className=" text-[14px] leading-5 font-semibold mb-2 max-w-[300px] text-slate-200">
                     {file.name}
                     <Image
                       src="/assets/icons/file-loader.gif"
                       width={70}
                       height={26}
                       alt="loader"
+                      className="filter brightness-200"
                     />
                   </div>
                 </div>
@@ -137,6 +138,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
                   height={24}
                   alt="remove"
                   onClick={(e) => handleRemoveFile(e, file.name)}
+                  className="cursor-pointer filter invert opacity-50 hover:opacity-100 transition-opacity"
                 />
               </li>
             );

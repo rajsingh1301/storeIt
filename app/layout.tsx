@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "StoreIt",
-  description: "StoreIt - The only storage solution you need.",
+  title: "FileDock",
+  description: "FileDock - The only storage solution you need.",
 };
 
 export default function RootLayout({

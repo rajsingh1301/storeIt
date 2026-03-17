@@ -1,36 +1,43 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+
 @import "tailwindcss";
 
 /* Resets */
 * {
-  margin: 4px;
+  margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* Light Theme Variables */
+/* Light Theme Variables -> Now redefined as Dark Theme Default */
 :root {
-  --background: #ffffff;
-  --foreground: #0f172a;
-  --shadow-drop-1: 0px 10px 30px 0px rgba(66, 71, 97, 0.1);
-  --shadow-drop-2: 0 8px 30px 0 rgba(65, 89, 214, 0.3);
-  --shadow-drop-3: 0 8px 30px 0 rgba(65, 89, 214, 0.1);
-  --radius: 12px;
-
-  --radius-lg: var(--radius);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-sm: calc(var(--radius) - 4px);
-  --brand:#cc4820;
+  --background: #0B1121; /* Deep navy / charcoal base */
+  --foreground: #F8FAFC;
+  
+  --shadow-drop-1: 0px 10px 30px 0px rgba(0, 0, 0, 0.4);
+  --shadow-drop-2: 0 0 24px 0 rgba(250, 114, 117, 0.4); /* Glowing Coral */
+  --shadow-drop-3: 0 8px 30px 0 rgba(0, 0, 0, 0.2);
+  
+  /* Ambient Dark Shadows */
+  --shadow-neumorphic: 0 8px 24px rgba(0,0,0,0.3);
+  --shadow-neumorphic-inset: inset 0 2px 4px rgba(0,0,0,0.4);
+  
+  --radius: 16px;
+  --radius-lg: 24px;
+  --radius-md: 16px;
+  --radius-sm: 12px;
+  --brand: #FA7275; /* Glowing coral */
 }
 
-/* Dark Theme */
+/* Dark Theme fallback */
 .dark {
-  --background: #0f172a;
+  --background: #0B1121;
   --foreground: #ffffff;
 }
 
-@layer utilities{
-  
-    .h1 {
+@layer utilities {
+  .h1 {
     @apply text-[34px] leading-[42px] font-bold;
   }
   .h2 {
@@ -46,23 +53,52 @@
     @apply text-[16px] leading-[24px] font-semibold;
   }
   .sidebar-nav {
-    @apply  mt-9 flex-1 gap-1  ;
+    @apply mt-9 flex-1 gap-1;
   }
-  .body-1{
+  .body-1 {
     @apply text-[16px] leading-[24px] font-normal;
-
   }
-  .body-2{
+  .body-2 {
     @apply text-[14px] leading-[20px] font-normal;
   }
+  
+  /* Soft Dark Mode Glassmorphism */
+  .glassmorphism {
+    @apply bg-white/5 backdrop-blur-2xl border border-white/10 shadow-[0_8px_32px_0_rgba(0,0,0,0.3)];
+  }
+  
+  .neumorphism {
+    @apply bg-[#151D2F] shadow-[0_8px_24px_rgba(0,0,0,0.2)] border border-white/5;
+  }
+  
+  .text-shadow-glow {
+    text-shadow: 0 0 12px rgba(250, 114, 117, 0.6);
+  }
 }
-
 
 /* Global styles */
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: system-ui, sans-serif;
-  padding: auto;
-  margin: auto;
+  font-family: 'Inter', system-ui, sans-serif;
+  height: 100vh;
+  /* Radial subtle dark background gradient */
+  background-image: radial-gradient(circle at top left, #1C263D 0%, #0B1121 100%);
+}
+
+.mono-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-feature-settings: "tnum";
+  font-variant-numeric: tabular-nums;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.remove-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.remove-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }

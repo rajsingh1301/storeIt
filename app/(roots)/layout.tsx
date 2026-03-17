@@ -15,7 +15,9 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
       <section className="flex h-full flex-1 flex-col ">
         <MobileNavigation {...CurrentUser} />
         <Header userId={CurrentUser.$id} accountId={CurrentUser.accountId} />
-        <div className="main-content "> {children}</div>
+        <div className="main-content flex-1 overflow-auto p-4 sm:p-6 lg:p-8 rounded-t-3xl sm:rounded-tl-[30px] sm:rounded-tr-none">
+          {children}
+        </div>
       </section>
       <Toaster />
     </main>

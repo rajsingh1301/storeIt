@@ -14,7 +14,7 @@ const page = async ({ searchParams, params }: SearchParamProps) => {
 
   const files = await getFiles({ types, searchText, sort });
   return (
-    <div className=" mx-auto flex w-full max-w-7xl flex-col items-center gap-8 ">
+    <div className=" w-full max-w-7xl mx-auto flex flex-col gap-8 pb-10 ">
       <section className="w-full">
         <h1 className="h1 capitalize">{type}</h1>
         <div className="flex mt-2 flex-col justify-between sm:flex-row sm:items-center">
@@ -33,7 +33,7 @@ const page = async ({ searchParams, params }: SearchParamProps) => {
       </section>
       {/* render files here  */}
       {files.total > 0 ? (
-        <section className="grid w-full gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+        <section className="grid w-full gap-4 sm:gap-6 grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
           {files.documents.map((file: Models.Document) => (
             <Card key={file.$id} file={file as any} />
           ))}
