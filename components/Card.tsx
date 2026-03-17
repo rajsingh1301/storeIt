@@ -22,6 +22,7 @@ interface FileDocument extends Models.Document {
 
 const Card = ({ file }: { file: FileDocument }) => {
   const displayName = file.fileName || file.name || "Unnamed File";
+  const isImage = file.type === "image";
 
   return (
     <Link

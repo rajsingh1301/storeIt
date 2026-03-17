@@ -14,13 +14,13 @@ declare interface SearchParamProps {
 }
 
 declare interface UploadFileProps {
-  file: File;
+  file: File | { buffer: number[]; name: string };
   ownerId: string;
   accountId: string;
   path: string;
 }
 declare interface GetFilesProps {
-  types: FileType[];
+  types?: FileType[];
   searchText?: string;
   sort?: string;
   limit?: number;

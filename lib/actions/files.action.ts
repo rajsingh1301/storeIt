@@ -7,8 +7,6 @@ import { ID, Models, Query } from "node-appwrite";
 import { constructFileUrl, getFileType, parseStringify } from "@/lib/utils";
 import { revalidatePath } from "next/cache";
 import { getUserProfile } from "@/lib/actions/user.action";
-import { log } from "console";
-import { success } from "zod";
 
 const handleError = (error: unknown, message: string) => {
   console.log(error, message);
@@ -24,8 +22,22 @@ export const uploadFile = async ({
   const { storage, database } = await createAdminClient();
 
   try {
+    // Check current storage usage
+    const totalSpace = await getTotalSpaceUsed();
+    const currentUsage = totalSpace?.used || 0;
+    const MAX_STORAGE = 2 * 1024 * 1024 * 1024; // 2GB in bytes
+    const fileSize = (file as any).buffer.length;
+
+    // Check if upload would exceed storage limit
+    if (currentUsage + fileSize > MAX_STORAGE) {
+      const availableSpace = MAX_STORAGE - currentUsage;
+      throw new Error(
+        `Not enough storage space. Available: ${(availableSpace / (1024 * 1024)).toFixed(2)}MB, Required: ${(fileSize / (1024 * 1024)).toFixed(2)}MB`,
+      );
+    }
+
     // Convert plain array back to Buffer
-    const buffer = Buffer.from(file.buffer);
+    const buffer = Buffer.from((file as any).buffer);
     const inputFile = InputFile.fromBuffer(buffer, file.name);
     const bucketFile = await storage.createFile(
       appWriteConfig.bucketId,
@@ -82,7 +94,7 @@ const createQueries = (
   const queries = [
     Query.or([
       Query.equal("owner", [currentUser.$id]),
-      Query.contains("users", [currentUser.email]),
+      Query.contains("users", [(currentUser as any).email]),
     ]),
   ];
 
@@ -103,7 +115,7 @@ const createQueries = (
 export const getFiles = async ({
   types = [],
   searchText = "",
-  sort = "$createdAt-desc",  
+  sort = "$createdAt-desc",
   limit,
 }: GetFilesProps) => {
   const { database } = await createAdminClient();

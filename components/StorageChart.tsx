@@ -1,10 +1,11 @@
 "use client";
 
-import React from "react";
-import { Doughnut } from "react-chartjs-2";
+import React, { useMemo } from "react";
 import {
-  Chart as ChartJS,
-  ArcElement,
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
   Tooltip,
   Legend,
   ChartOptions,

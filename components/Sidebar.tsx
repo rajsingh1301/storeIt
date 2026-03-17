@@ -67,7 +67,7 @@ const Sidebar = ({fullName , email , avatar}: Props) => {
         </ul>
       </nav>
       <Image src="/assets/images/files-2.png"
-      alt ="logo"
+        alt="logo"
         width={503}
         height={415}
         className="w-full opacity-60 mix-blend-screen"
@@ -80,6 +80,7 @@ const Sidebar = ({fullName , email , avatar}: Props) => {
             <p className="text-[12px] leading-[16px] font-normal text-[#94a3b8]">{email}</p>
             </div>
         </div>
+      </div>
     </aside>
   );
 };

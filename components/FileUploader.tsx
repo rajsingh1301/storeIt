@@ -20,7 +20,7 @@ interface Props {
 const FileUploader = ({ ownerId, accountId, className }: Props) => {
   const handleRemoveFile = (
     e: React.MouseEvent<HTMLImageElement, MouseEvent>,
-    fileName: string
+    fileName: string,
   ) => {
     e.stopPropagation();
     setFiles((prevFiles) => prevFiles.filter((file) => file.name !== fileName));
@@ -33,7 +33,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
       const uploadPromises = acceptedFiles.map(async (file) => {
         if (file.size > MAX_FILE_SIZE) {
           setFiles((prevFiles) =>
-            prevFiles.filter((f) => f.name !== file.name)
+            prevFiles.filter((f) => f.name !== file.name),
           );
           return toast.error(
             <p className="text-[14px] leading-5 font-normal text-white">
@@ -46,7 +46,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
                 color: "white",
                 borderRadius: "10px",
               },
-            }
+            },
           );
         }
 
@@ -59,16 +59,35 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
           .then((uploadedFile) => {
             if (uploadedFile) {
               setFiles((prevFiles) =>
-                prevFiles.filter((f) => f.name !== file.name)
+                prevFiles.filter((f) => f.name !== file.name),
               );
             }
           })
           .catch((error) => {
             console.error("Upload error:", error);
+
+            // Check if it's a storage limit error
+            const errorMessage = error?.message || "";
+            const isStorageError = errorMessage.includes(
+              "Not enough storage space",
+            );
+
             toast.error(
               <p className="text-[14px] leading-5 font-normal text-white">
-                Failed to upload{" "}
-                <span className="font-semibold">{file.name}</span>
+                {isStorageError ? (
+                  <>
+                    <span className="font-semibold">
+                      Not enough storage space!
+                    </span>
+                    <br />
+                    {errorMessage.split(".").slice(1).join(".")}
+                  </>
+                ) : (
+                  <>
+                    Failed to upload{" "}
+                    <span className="font-semibold">{file.name}</span>
+                  </>
+                )}
               </p>,
               {
                 style: {
@@ -76,13 +95,14 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
                   color: "white",
                   borderRadius: "10px",
                 },
-              }
+                duration: 5000,
+              },
             );
           });
       });
       await Promise.all(uploadPromises);
     },
-    [ownerId, accountId, path]
+    [ownerId, accountId, path],
   );
 
   const { getRootProps, getInputProps } = useDropzone({ onDrop });
@@ -94,7 +114,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
         type="button"
         className={cn(
           "bg-[#FA7275] hover:bg-[#E46F72] transition-all rounded-[42px] h-[52px] w-35 lg:h-[52px] px-10 lg:px-16 flex items-center gap-3 shadow-[0_6px_18px_rgba(250,114,117,0.35)] text-white text-[16px] lg:text-[18px] font-semibold tracking-wide",
-          className
+          className,
         )}
       >
         <Image
