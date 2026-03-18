@@ -25,7 +25,7 @@ export const uploadFile = async ({
 
   try {
     // Convert plain array back to Buffer
-    const buffer = Buffer.from(file.buffer);
+    const buffer = Buffer.from((file as any).buffer);
     const inputFile = InputFile.fromBuffer(buffer, file.name);
     const bucketFile = await storage.createFile(
       appWriteConfig.bucketId,
@@ -82,7 +82,7 @@ const createQueries = (
   const queries = [
     Query.or([
       Query.equal("owner", [currentUser.$id]),
-      Query.contains("users", [currentUser.email]),
+      Query.contains("users", [(currentUser as any).email]),
     ]),
   ];
 

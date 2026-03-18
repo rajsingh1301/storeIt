@@ -128,7 +128,7 @@ const StorageChart: React.FC<StorageChartProps> = (totalSpace) => {
   };
 
   return (
-    <div className="w-full h-full glassmorphism rounded-[32px] p-6 sm:p-8 flex flex-col transition-all">
+    <div className="w-full h-full rounded-[20px] bg-white/[0.03] backdrop-blur-[24px] shadow-[0_0_25px_rgba(0,0,0,0.03)] border-none p-6 sm:p-8 flex flex-col transition-all">
       <div className="flex items-start justify-between mb-6 sm:mb-8">
         <h2 className="text-xl sm:text-[26px] font-bold text-white tracking-tight drop-shadow-sm">Storage Details</h2>
       </div>

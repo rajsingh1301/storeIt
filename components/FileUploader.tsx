@@ -93,7 +93,7 @@ const FileUploader = ({ ownerId, accountId, className }: Props) => {
       <Button
         type="button"
         className={cn(
-          "bg-[#FA7275] hover:bg-[#E46F72] transition-all rounded-[42px] h-[52px] w-35 lg:h-[52px] px-10 lg:px-16 flex items-center gap-3 shadow-[0_6px_18px_rgba(250,114,117,0.35)] text-white text-[16px] lg:text-[18px] font-semibold tracking-wide",
+          "bg-gradient-to-r from-[#FF6B6B] to-[#FF5555] hover:opacity-90 transition-all rounded-[32px] h-[52px] hover:border-none focus:outline-none w-35 lg:h-[52px] px-10 lg:px-12 flex items-center gap-3 shadow-[inset_0_-2px_4px_rgba(0,0,0,0.15),0_6px_18px_rgba(250,114,117,0.35)] text-white text-[16px] font-semibold tracking-wide border-none",
           className
         )}
       >

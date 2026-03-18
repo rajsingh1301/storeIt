@@ -3,9 +3,9 @@ import Image from 'next/image'
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
-    <div className="flex min-h-screen bg-transparent">
+    <div className="flex min-h-screen bg-gradient-to-b from-[#1A2234] to-[#0D111E]">
       {/* Branding Side - Deep Slate Panel */}
-      <section className="hidden w-1/2 items-center justify-center bg-[#1a1f2c] border-r border-white/5 p-10 lg:flex xl:w-2/5 relative overflow-hidden">
+      <section className="hidden w-1/2 items-center justify-center border-r border-white/5 p-10 lg:flex xl:w-2/5 relative overflow-hidden">
         {/* Decorative ambient glow */}
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#FA7275] rounded-full mix-blend-screen filter blur-[150px] opacity-10 pointer-events-none" />
         

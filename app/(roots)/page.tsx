@@ -70,7 +70,7 @@ export default async function Home() {
         </div>
         
         {/* Recent Files Column */}
-        <div className="flex-1 min-w-0 glassmorphism rounded-[32px] p-6 sm:p-8 flex flex-col h-[500px] xl:h-[500px] overflow-hidden">
+        <div className="flex-1 min-w-0 rounded-[20px] bg-white/[0.03] backdrop-blur-[24px] shadow-[0_0_25px_rgba(0,0,0,0.03)] border-none p-6 sm:p-8 flex flex-col h-[500px] xl:h-[500px] overflow-hidden">
            <div className="flex items-center justify-between mb-8 flex-shrink-0">
              <h2 className="text-xl sm:text-[26px] font-bold text-white tracking-tight drop-shadow-sm">Recent Files</h2>
              <Link href="/documents" className="text-[14px] font-semibold text-[#FA7275] hover:text-[#ffb4b6] transition-colors uppercase tracking-widest bg-white/5 px-4 py-2 rounded-full backdrop-blur-md shadow-sm border border-white/10">

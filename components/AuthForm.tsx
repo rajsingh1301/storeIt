@@ -77,13 +77,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="flex flex-col w-full max-w-[480px] space-y-6 transition-all glassmorphism p-8 sm:p-10 rounded-[32px] border border-white/10"
-        >
-          <div className="flex flex-col gap-2 mb-2">
-            <h1 className="text-[30px] sm:text-[34px] leading-tight font-bold text-white text-center sm:text-left tracking-tight drop-shadow-sm">
+className="flex flex-col w-full max-w-[520px] gap-10 sm:gap-12 p-10 sm:p-16 rounded-[32px] bg-white/[0.02] backdrop-blur-[40px] border border-white/[0.08] shadow-[0_0_30px_rgba(250,114,117,0.1),inset_0_1px_1px_rgba(255,255,255,0.05)]"        >
+<div className="flex flex-col gap-3">
+              <h1 className="text-[36px] sm:text-[40px] font-bold text-white text-center tracking-tight antialiased">
               {type === "sign-in" ? "Welcome Back" : "Create Account"}
             </h1>
-            <p className="text-[15px] text-slate-400 text-center sm:text-left">
+            <p className="text-[15px] text-slate-400 text-center font-normal antialiased">
               {type === "sign-in" ? "Sign in to access your FileDock." : "Sign up and get securely organized."}
             </p>
           </div>
@@ -94,19 +93,21 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
               name="fullName"
               render={({ field }) => (
                 <FormItem>
-                  <div className="flex h-[76px] flex-col justify-center rounded-2xl border border-white/5 bg-white/5 px-4 shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] focus-within:border-white/20 focus-within:bg-white/10 transition-colors">
-                    <FormLabel className="text-slate-400 pt-1 text-[13px] leading-5 font-semibold w-full uppercase tracking-wider">
-                      Full Name
+                  <div className="flex flex-col">
+                    <FormLabel className="text-slate-400 text-[13px] mb-2 font-medium uppercase tracking-wider">
+                      FULL NAME
                     </FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Enter your full name"
-                        {...field}
-                        className="border-none shadow-none px-0 py-2 h-auto outline-none focus:ring-0 placeholder:text-slate-600 text-white font-medium text-[16px] bg-transparent"
-                      />
+                      <div className="relative flex items-center w-full rounded-[12px] bg-[#161C2D] border border-[#2A3449] shadow-[inset_0_2px_6px_rgba(0,0,0,0.2)] focus-within:border-[#FA7275] focus-within:shadow-[0_0_12px_rgba(250,114,117,0.3),inset_0_2px_6px_rgba(0,0,0,0.2)] transition-all h-[52px]">
+                        <Input
+                          placeholder="Enter your full name"
+                          {...field}
+                          className="w-full h-full border-none shadow-none bg-transparent px-[16px] outline-none focus-visible:ring-0 text-white font-medium text-[15px] placeholder:text-slate-500 placeholder:font-normal caret-white rounded-[12px]"
+                        />
+                      </div>
                     </FormControl>
                   </div>
-                  <FormMessage className="text-[#FA7275] text-[13px] font-medium ml-2 mt-1 drop-shadow-sm" />
+                  <FormMessage className="text-[#FA7275] text-[13px] font-medium ml-1 mt-1 drop-shadow-sm" />
                 </FormItem>
               )}
             />
@@ -116,56 +117,64 @@ const AuthForm: React.FC<AuthFormProps> = ({ type }) => {
             control={form.control}
             name="email"
             render={({ field }) => (
-              <FormItem>
-                <div className="flex h-[76px] flex-col justify-center rounded-2xl border border-white/5 bg-white/5 px-4 shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] focus-within:border-white/20 focus-within:bg-white/10 transition-colors">
-                  <FormLabel className="text-slate-400 pt-1 text-[13px] leading-5 font-semibold w-full uppercase tracking-wider">
-                    Email
+              <FormItem className={type === "sign-up" ? "mt-6" : ""}>
+                <div className="flex flex-col">
+                  <FormLabel className="text-slate-400 text-[13px] mb-2 font-medium uppercase tracking-wider">
+                    EMAIL
                   </FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="Enter your email"
-                      {...field}
-                      className="border-none shadow-none px-0 py-2 h-auto outline-none focus:ring-0 placeholder:text-slate-600 text-white font-medium text-[16px] bg-transparent"
-                    />
+                    <div className="relative flex items-center w-full rounded-[12px] bg-[#161C2D] border border-[#2A3449] shadow-[inset_0_2px_6px_rgba(0,0,0,0.2)] focus-within:border-[#FA7275] focus-within:shadow-[0_0_12px_rgba(250,114,117,0.3),inset_0_2px_6px_rgba(0,0,0,0.2)] transition-all h-[52px]">
+                      <Input
+                        placeholder="Enter your email"
+                        {...field}
+                        className="w-full h-full border-none shadow-none bg-transparent px-[16px] outline-none focus-visible:ring-0 text-white font-medium text-[15px] placeholder:text-slate-500 placeholder:font-normal caret-white rounded-[12px]"
+                      />
+                    </div>
                   </FormControl>
                 </div>
-                <FormMessage className="text-[#FA7275] text-[13px] font-medium ml-2 mt-1 drop-shadow-sm" />
+                <FormMessage className="text-[#FA7275] text-[13px] font-medium ml-1 mt-1 drop-shadow-sm" />
               </FormItem>
             )}
           />
 
-          <Button
-            type="submit"
-            className="bg-[#FA7275] hover:bg-[#ffb4b6] hover:text-[#1a1f2c] text-white transition-all duration-300 rounded-full h-[60px] inline-flex items-center justify-center font-bold text-[16px] shadow-[0_0_24px_rgba(250,114,117,0.4)] hover:shadow-[0_0_32px_rgba(250,114,117,0.6)] mt-2"
-            disabled={isLoading}
-          >
-            {type === "sign-in" ? "Sign In" : "Sign Up"}
-            {isLoading && (
-              <Image
-                src="/assets/icons/loader.svg"
-                alt="Loader"
-                width={24}
-                height={24}
-                className="ml-2 animate-spin filter brightness-0 invert"
-              />
-            )}
-          </Button>
+         <div className="flex flex-col gap-3 p-5">
+  <Button
+    type="submit"
+    disabled={isLoading}
+    className="w-full h-[52px] rounded-xl font-semibold text-[16px] 
+    bg-gradient-to-r from-[#FF6B6B] to-[#FA7275] 
+    hover:from-[#ff8689] hover:to-[#ff8689] 
+    text-white transition-all duration-300 
+    shadow-[0_6px_20px_rgba(250,114,117,0.35)] 
+    flex items-center justify-center gap-2"
+  >
+    {type === "sign-in" ? "Sign In" : "Sign Up"}
 
+    {isLoading && (
+      <Image
+        src="/assets/icons/loader.svg"
+        alt="Loader"
+        width={20}
+        height={20}
+        className="animate-spin"
+      />
+    )}
+  </Button>
+</div>
           {errorMessage && (
-            <p className="text-[14px] leading-tight font-medium mx-auto w-full rounded-2xl bg-red-500/10 border border-red-500/20 px-6 py-4 text-center text-[#FA7275] shadow-[inset_0_0_12px_rgba(250,114,117,0.1)]">
+            <p className="text-[14px] leading-tight font-medium mx-auto w-full rounded-[10px] bg-red-500/10 border border-red-500/20 px-6 py-4 text-center text-[#FA7275] mt-6">
               {errorMessage}
             </p>
           )}
 
-          <div className="text-[14px] font-medium flex justify-center mt-2">
-            <p className="text-slate-400">
+<div className="text-[14px] font-medium flex justify-center pt-6 border-t border-white/[0.05]">            <p className="text-slate-400">
               {type === "sign-in"
                 ? "Don't have an account? "
                 : "Already have an account? "}
             </p>
             <Link
               href={type === "sign-in" ? "/sign-up" : "/sign-in"}
-              className="text-[#FA7275] ml-1.5 hover:text-[#ffb4b6] transition-colors drop-shadow-[0_0_8px_rgba(250,114,117,0.4)]"
+              className="text-[#FA7275]/90 ml-1.5 hover:text-[#FA7275] transition-colors"
             >
               {type === "sign-in" ? "Sign Up" : "Sign In"}
             </Link>

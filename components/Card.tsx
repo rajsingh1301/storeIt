@@ -27,43 +27,47 @@ const Card = ({ file }: { file: FileDocument }) => {
     <Link
       href={file.url}
       target="_blank"
-      className="group relative flex cursor-pointer flex-col justify-between rounded-[18px] bg-white p-4 sm:p-5 shadow-sm border border-gray-100 transition-all hover:shadow-md hover:-translate-y-1"
+      className="group relative flex cursor-pointer flex-col justify-between rounded-[16px] bg-white/[0.03] backdrop-blur-[24px] p-5 shadow-[0_0_25px_rgba(0,0,0,0.03),inset_0_1px_1px_rgba(255,255,255,0.08)] border border-white/5 transition-all duration-300 hover:shadow-[0_0_25px_rgba(250,114,117,0.15),inset_0_1px_1px_rgba(255,255,255,0.08)] hover:-translate-y-1 hover:border-[#FA7275]/50 overflow-hidden"
     >
-      <div className="flex justify-between items-start gap-4">
+      {/* Top Row: Thumbnail and Dropdown */}
+      <div className="flex justify-between items-start gap-4 mb-3">
         <Thumbnail
           type={file.type}
           extension={file.extension}
           url={file.url}
-          className="!size-14 sm:!size-16 drop-shadow-sm"
-          imageClassName="!size-full object-cover rounded-lg"
+          className="!size-[50px] shadow-[0_0_10px_rgba(255,255,255,0.2)] border border-white/20 bg-transparent transition-transform duration-300 group-hover:scale-105"
+          imageClassName="!size-full object-cover rounded-full"
         />
-        <div className="flex flex-col items-end gap-2">
+        <div className="flex flex-col items-end gap-2 relative z-10">
            <ActionDropDown file={file} />
-           <p className="text-[10px] sm:text-xs font-semibold text-gray-400 capitalize whitespace-nowrap">
-             {convertFileSize(file.fileSize || file.size || 0)}
-           </p>
         </div>
       </div>
       
-      <div className="mt-4 flex flex-col gap-1">
-        <p className="text-sm md:text-base font-semibold text-gray-800 line-clamp-1 group-hover:text-brand">
+      {/* Middle Row: Filename */}
+      <div className="mt-2 flex flex-col gap-1 w-full justify-center flex-1">
+        <p className="text-[16px] font-semibold text-white/90 truncate tracking-wide font-mono transition-colors group-hover:text-[#FA7275]">
           {displayName}
         </p>
-        <FormatedDateTime
-          date={file.uploadDate}
-          className="!text-[10px] md:!text-xs font-medium text-gray-400"
-        />
       </div>
 
-      <div className="mt-3 pt-3 border-t border-gray-100 flex items-center justify-between">
-        <div className="flex items-center gap-2">
-           <div className="h-6 w-6 sm:h-8 sm:w-8 rounded-full bg-brand/10 flex items-center justify-center text-brand text-[10px] sm:text-xs font-bold">
-             {file.owner?.fullName?.charAt(0)?.toUpperCase() || "U"}
-           </div>
-           <p className="text-xs sm:text-sm font-medium text-gray-600 truncate max-w-[100px] sm:max-w-[120px]">
-             {file.owner?.fullName || "Unknown"}
-           </p>
-        </div>
+      {/* Bottom Row: Metadata Rail */}
+      <div className="mt-5 flex items-center justify-between text-[11.5px] font-mono text-slate-400 tracking-tight w-full truncate relative z-10 px-1">
+         <span className="truncate pr-2.5 font-medium">
+           {convertFileSize(file.fileSize || file.size || 0)}
+         </span>
+         
+         <div className="w-[1px] h-3 bg-slate-400/30 flex-shrink-0" />
+         
+         <FormatedDateTime
+           date={file.uploadDate}
+           className="!text-[11.5px] !font-medium !text-slate-400 px-2.5 truncate font-mono"
+         />
+         
+         <div className="w-[1px] h-3 bg-slate-400/30 flex-shrink-0" />
+         
+         <span className="truncate pl-2.5 font-medium">
+           {file.owner?.fullName || "Unknown"}
+         </span>
       </div>
     </Link>
   );

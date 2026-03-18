@@ -22,10 +22,10 @@ const Sort = ({ defaultValue }: { defaultValue: string }) => {
 
   return (
     <Select onValueChange={handleSort} defaultValue={defaultValue}>
-      <SelectTrigger className="flex h-11 w-full items-center justify-between gap-2 rounded-xl border border-gray-200 bg-white px-4 text-sm font-medium text-[#333F4E] shadow-sm transition-all hover:border-[#cc4820] hover:bg-gray-50 focus:ring-4 focus:ring-[#cc4820]/10 focus:outline-none sm:w-[210px] data-[state=open]:border-[#cc4820] data-[state=open]:ring-4 data-[state=open]:ring-[#cc4820]/10">
-        <div className="flex items-center gap-2">
-          <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#cc4820]/10 text-[#cc4820]">
-            <ArrowUpDown className="size-3.5" />
+      <SelectTrigger className="flex h-[42px] w-full items-center justify-between gap-2 rounded-[12px] border border-white/5 bg-white/[0.03] px-5 text-[14px] font-medium text-slate-300 shadow-[inset_0_2px_4px_rgba(0,0,0,0.2)] transition-all hover:bg-white/[0.06] hover:border-white/10 focus:ring-0 sm:w-[230px] data-[state=open]:bg-white/[0.08] data-[state=open]:border-[#FA7275]/50">
+        <div className="flex items-center gap-3">
+          <div className="flex h-6 w-6 items-center justify-center text-[#FA7275]">
+            <ArrowUpDown className="size-[14px]" strokeWidth={2.5}/>
           </div>
           <SelectValue placeholder={sortTypes[0].label} />
         </div>
@@ -33,16 +33,16 @@ const Sort = ({ defaultValue }: { defaultValue: string }) => {
 
       <SelectContent
         position="popper"
-        sideOffset={8}
-        className="min-w-[210px] rounded-2xl border border-gray-100 bg-white/95 p-1.5 shadow-[0_10px_40px_-10px_rgba(0,0,0,0.1)] backdrop-blur-md animate-in fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2"
+        sideOffset={10}
+        className="min-w-[230px] rounded-[16px] border border-white/10 bg-[#151D2F]/95 p-1.5 shadow-[0_16px_40px_-10px_rgba(0,0,0,0.6)] backdrop-blur-xl animate-in fade-in-0 zoom-in-95 data-[side=bottom]:slide-in-from-top-2"
       >
         {sortTypes.map((sort) => (
           <SelectItem
             key={sort.value}
             value={sort.value}
-            className="flex cursor-pointer items-center rounded-xl px-3 py-2.5 text-sm text-[#333F4E] transition-all hover:bg-gray-50 focus:bg-[#cc4820]/5 focus:text-[#cc4820] data-[state=checked]:bg-[#cc4820] data-[state=checked]:text-white font-medium group"
+            className="flex cursor-pointer items-center rounded-[10px] px-4 py-3 text-[14px] text-slate-300 transition-all hover:bg-white/[0.05] focus:bg-white/[0.05] focus:text-white data-[state=checked]:bg-[#FA7275]/10 data-[state=checked]:text-[#FA7275] font-medium group"
           >
-            <span className="flex-1">{sort.label}</span>
+            <span className="flex-1 tracking-wide">{sort.label}</span>
           </SelectItem>
         ))}
       </SelectContent>

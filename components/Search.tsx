@@ -50,14 +50,14 @@ const Search = () => {
   };
 
   return (
-    <div className="relative w-full">
-      <div className="flex h-[52px] flex-1 items-center gap-3 rounded-full px-4 border border-white/10 bg-[#151D2F] shadow-[inset_0_2px_4px_rgba(0,0,0,0.3)] backdrop-blur-md">
+    <div className="relative w-[500px] max-w-full">
+      <div className="flex h-[52px] w-full items-center gap-4 rounded-[16px] px-5 border border-slate-600/40 bg-[#1A2234] shadow-[inset_0_2px_6px_rgba(0,0,0,0.4)] transition-all focus-within:border-[#FA7275]/50 focus-within:shadow-[inset_0_2px_10px_rgba(0,0,0,0.4),0_0_20px_rgba(250,114,117,0.15)]">
         <Image
           src="/assets/icons/search.svg"
           alt="search"
           width={20}
           height={20}
-          className="mt-1 opacity-50 filter invert brightness-0"
+          className="opacity-40 filter invert brightness-0"
         />
         <Input
           value={query}

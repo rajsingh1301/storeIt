@@ -186,14 +186,16 @@ const ActionDropDown = ({ file }: { file: FileDocument }) => {
   return (
     <Dialog open={IsModelOpen} onOpenChange={setIsModelOpen}>
       <DropdownMenu open={IsDropdownOpen} onOpenChange={setIsDropdownOpen}>
-        <DropdownMenuTrigger className="outline-none ring-offset-transparent focus:ring-transparent focus:ring-offset-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 transition-transform hover:scale-110 active:scale-95">
-          <Image
-            src="/assets/icons/dots.svg"
-            alt="dot"
-            width={34}
-            height={34}
-            className="opacity-60 hover:opacity-100 transition-opacity"
-          />
+        <DropdownMenuTrigger className="outline-none ring-offset-transparent focus:ring-transparent focus:ring-offset-0 focus-visible:outline-none focus-visible:ring-0 focus-visible:ring-transparent focus-visible:ring-offset-0 transition-transform duration-300 hover:scale-110 active:scale-95">
+          <div className="flex items-center justify-center p-1 rounded-full transition-colors hover:bg-white/5">
+            <Image
+              src="/assets/icons/dots.svg"
+              alt="dot"
+              width={26}
+              height={26}
+              className="opacity-50 filter invert brightness-[0.7] hover:opacity-100 hover:brightness-100 transition-all"
+            />
+          </div>
         </DropdownMenuTrigger>
         <DropdownMenuContent className="w-62 rounded-xl bg-white shadow-xl ring-1 ring-gray-100 border-0 p-3">
           <DropdownMenuLabel className="max-w-full truncate px-4 py-3 text-lg font-semibold text-gray-900">
