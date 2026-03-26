@@ -78,6 +78,7 @@ const createQueries = (
   searchText: string,
   sort: string,
   limit?: number,
+  offset?: number,
 ) => {
   const queries = [
     Query.or([
@@ -97,6 +98,8 @@ const createQueries = (
     );
   }
 
+  if (offset) queries.push(Query.offset(offset));
+
   return queries;
 };
 
@@ -105,6 +108,7 @@ export const getFiles = async ({
   searchText = "",
   sort = "$createdAt-desc",  
   limit,
+  offset,
 }: GetFilesProps) => {
   const { database } = await createAdminClient();
   try {
@@ -113,7 +117,7 @@ export const getFiles = async ({
       throw new Error("User not authenticated");
     }
 
-    const queries = createQueries(currentUser, types, searchText, sort, limit);
+    const queries = createQueries(currentUser, types, searchText, sort, limit, offset);
 
     const files = await database.listDocuments(
       appWriteConfig.databaseId,

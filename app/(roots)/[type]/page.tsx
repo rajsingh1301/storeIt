@@ -5,6 +5,9 @@ import { Models } from "node-appwrite";
 import Card from "@/components/Card";
 import { getFileTypesParams } from "@/lib/utils";
 import { FolderPlus } from "lucide-react";
+import { Pagination } from "@/components/Pagination";
+
+
 
 const page = async ({ searchParams, params }: SearchParamProps) => {
   const type = ((await params)?.type as string) || " ";
@@ -13,7 +16,12 @@ const page = async ({ searchParams, params }: SearchParamProps) => {
 
   const types = getFileTypesParams(type) as FileType[];
 
-  const files = await getFiles({ types, searchText, sort });
+  const pageNumber = Number((await searchParams)?.page) || 1;
+  const limit = 10;
+  const offset = (pageNumber - 1) * limit;
+
+  const files = await getFiles({ types, searchText, sort, limit, offset });
+  const totalPages = Math.ceil(files.total / limit);
   return (
     <div className="w-full max-w-7xl mx-auto flex flex-col gap-10 pb-10 pt-4">
       <section className="w-full">
@@ -33,11 +41,14 @@ const page = async ({ searchParams, params }: SearchParamProps) => {
       </section>
       {/* render files here  */}
       {files.total > 0 ? (
-        <section className="grid w-full gap-4 sm:gap-6 grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
-          {files.documents.map((file: Models.Document) => (
-            <Card key={file.$id} file={file as any} />
-          ))}
-        </section>
+        <div className="flex flex-col gap-6">
+          <section className="grid w-full gap-4 sm:gap-6 grid-cols-2 md:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+            {files.documents.map((file: Models.Document) => (
+              <Card key={file.$id} file={file as any} />
+            ))}
+          </section>
+          {totalPages > 1 && <Pagination page={pageNumber} totalPages={totalPages} />}
+        </div>
       ) : (
         <div className="flex flex-col items-center justify-center pt-28 pb-16 opacity-80">
           <div className="flex h-20 w-20 items-center justify-center rounded-3xl bg-[#FA7275]/10 border border-[#FA7275]/20 shadow-[inset_0_2px_10px_rgba(250,114,117,0.2),0_10px_30px_rgba(250,114,117,0.15)] mb-6 transition-transform hover:-translate-y-1">
